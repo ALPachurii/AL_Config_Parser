@@ -113,13 +113,13 @@ class Ship:
         """
         return self.proficiency[equipSlot]
 
-    def getBaseEquip(self) -> list:
+    def getEquipBase(self, equipSlot: int) -> int:
         """
         get the equipment base count of a certain slot
         :param equipSlot: the specific slot, integer, range from 0 - 2, 0 is the first weapon
         :return: the base count, integer
         """
-        return self.equipBaseList
+        return self.equipBaseList[equipSlot]
 
     def getFleetTechPoint(self, stage: int) -> int:
         """
