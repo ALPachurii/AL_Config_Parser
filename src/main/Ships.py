@@ -1,11 +1,12 @@
 import math
-from typing import List, Dict, Generic, TypeVar, Tuple
+from typing import List, Tuple
 
 
 class Ship:
     """
     Supertype of SurfaceShip and Submarine. Ship class stores all info of a ship and has methods to access them.
     """
+
     def __init__(self, statDict: dict, dataDict: dict, fleetTechStat: dict):
         self.nationality = statDict["nationality"]
         self.id = statDict["id"]

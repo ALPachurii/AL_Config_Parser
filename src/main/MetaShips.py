@@ -6,6 +6,7 @@ class MetaShip(Ship):
     """
     MetaShip is an abstraction of all of its subships, its stats are the same as mlb version of its subship
     """
+
     def __init__(self, statDict: dict, dataDict: dict, fleetTechStat: dict):
         Ship.__init__(self, statDict, dataDict, fleetTechStat)
         self.id = int(str(self.id)[slice(0, -1)])
