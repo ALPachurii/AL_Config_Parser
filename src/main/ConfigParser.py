@@ -1,5 +1,6 @@
 import json
 from src.main.Ships import Ship, SurfaceShip, Submarine
+from src.main.MetaShips import MetaShip, MetaSurfaceShip, MetaSubmarine
 from src.main.NationList import getNationList
 import typing
 
@@ -40,6 +41,16 @@ class ConfigParser:
             return SurfaceShip(self.shipStatisticDict[ID], self.shipDataDict[ID], self.fleetTechDict[ID[slice(0, -1)]])
         else:
             return Submarine(self.shipStatisticDict[ID], self.shipDataDict[ID], self.fleetTechDict[ID[slice(0, -1)]])
+
+    def getMetaShip(self, metaShipID: int) -> MetaShip:
+        ID = str(metaShipID)
+        maxLimitBreakID = ID + "4"
+        if self.shipStatisticDict[maxLimitBreakID]["oxy_max"] == 0:
+            return MetaSurfaceShip(self.shipStatisticDict[maxLimitBreakID], self.shipDataDict[maxLimitBreakID],
+                                   self.fleetTechDict[ID])
+        else:
+            return MetaSubmarine(self.shipStatisticDict[maxLimitBreakID], self.shipDataDict[maxLimitBreakID],
+                                 self.fleetTechDict[ID])
 
     def getWeapon(self, wepID: int) -> dict:
         pass
@@ -100,5 +111,3 @@ class ConfigParser:
         for ID, name in self.getShipIdToName().items():
             nameToId[name].append(ID)
         return nameToId
-
-
