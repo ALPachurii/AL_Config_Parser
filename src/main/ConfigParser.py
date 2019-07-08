@@ -69,7 +69,7 @@ class ConfigParser:
 
         :return: An ship attribute info dict which maps attribute ID to it's name (for example FP)
         """
-        return self.attrDict
+        return {int(ID): x['name'] for ID, x in self.attrDict.items()}
 
     def getAttrName(self, attrID: int) -> str:
         """
@@ -78,7 +78,7 @@ class ConfigParser:
         :param attrID: the ID of the attribute, range from 1 to 9
         :return: attribute's name
         """
-        return self.attrDict[attrID]
+        return self.getAttrDict()[attrID]
 
     @staticmethod
     def getNation(nationID: int) -> str:
