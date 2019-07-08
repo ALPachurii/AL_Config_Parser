@@ -1,6 +1,7 @@
 import json
 from src.main.Ships import *
 from src.main.MetaShips import *
+from src.main.Utility import *
 from src.main.NationList import getNationList
 import typing
 
@@ -92,17 +93,19 @@ class ConfigParser:
 
     def getShipList(self) -> list:
         """
-        generates ship id list
-        :return: list of all ship ids
+        generates ship id list, automatically filters non-collectable ships
+        :return: list of all collectable ship ids
         """
-        return [ID for ID, _ in self.shipStatisticDict.items()]
+        return [int(ID) for ID, _ in self.shipStatisticDict.items() if not isFiltered(int(ID))]
 
     def getShipIdToName(self) -> dict:
         """
         generates a map from shipID to ship's English name
         :return: a dict, keys are ship id (int), values are ship name (string)
         """
-        return {int(ID): statDict['english_name'] for ID, statDict in self.shipStatisticDict.items()}
+        return {ID: (self.shipStatisticDict[str(ID)]['name']
+                     + (" BB" if isKagaBB(ID) else "") + " "
+                     + "(" + self.shipStatisticDict[str(ID)]['english_name'] + ")") for ID in self.getShipList()}
 
     def getShipNameToId(self) -> dict:
         """
