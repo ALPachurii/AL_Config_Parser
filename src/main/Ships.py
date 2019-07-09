@@ -1,5 +1,6 @@
 import math
 from typing import List, Tuple
+from src.main.Utility import isKagaBB
 
 
 class Ship:
@@ -162,8 +163,20 @@ class Ship:
         else:
             raise ValueError("equipSlot should be 0-4")
 
-    def toString(self):
-        pass
+    def toString(self) -> str:
+        string = "Name: {name}{kagaBB} ({nameWithPrefix})\n".format(name=self.name,
+                                                                    kagaBB=" BB" if isKagaBB(self.id) else "",
+                                                                    nameWithPrefix=self.englishName) + \
+                 "ID: {id}\n".format(id=self.id) + \
+                 "HullType: {hullType}\n".format(hullType=self.hullType) + \
+                 "Rarity: {rarity}\n".format(rarity=self.rarity) + \
+                 "Stars: {stars}\n".format(stars=self.star) + \
+                 "Skills: {skill}\n".format(skill=self.skillList) + \
+                 "EquipType: {equips}\n".format(equips=self.equipTypeList) + \
+                 "EquipBase: {equipBase}\n".format(equipBase=self.equipBaseList) + \
+                 "FleetPT: {techPoint}\n".format(techPoint=self.fleetTechPoint) + \
+                 "FleetStatBonus: {techStatBonus}\n".format(techStatBonus=self.fleetStatBonus)
+        return string
 
 
 class SurfaceShip(Ship):
