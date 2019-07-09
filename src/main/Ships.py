@@ -44,16 +44,17 @@ class Ship:
         :param affBonus: the affinity bonus, range from 0 (50 affinity) to 12 (oath and 200 affinity)
         :return: the stat, float number
         """
+        statID -= 1
         if level < 1 or level > 120:
             raise ValueError("Level out of bound")
         elif affBonus < 0 or affBonus > 12:
             raise ValueError("affBonus out of bound")
         else:
             if level <= 100:
-                return self.attrs[statID] + (level - 1) * self.attrsGrowth[statID] / 1000
+                return (self.attrs[statID] + (level - 1) * self.attrsGrowth[statID] / 1000) * (1 + affBonus / 100)
             else:
-                return self.attrs[statID] + (level - 1) * self.attrsGrowth / 1000 + \
-                       (level - 100) * self.attrsGrowthExtra / 1000
+                return (self.attrs[statID] + (level - 1) * self.attrsGrowth[statID] / 1000 +
+                        (level - 100) * self.attrsGrowthExtra[statID] / 1000) * (1 + affBonus / 100)
 
     def getFlooredStat(self, statID: int, level: int, affBonus: int) -> int:
         """
@@ -261,5 +262,3 @@ class Submarine(Ship):
         :return: hunting range level, integer
         """
         return self.huntingRangeLevel
-
-    pass
