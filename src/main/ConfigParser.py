@@ -116,3 +116,17 @@ class ConfigParser:
         for ID, name in self.getShipIdToName().items():
             nameToId[name].append(ID)
         return nameToId
+
+    def getMetaShipList(self) -> typing.Set[int]:
+        """
+        generates meta ship ID list, automatically filters NPC ships
+        :return: list of meta ship id
+        """
+        shipList = self.getShipList()
+        return set(map(getMetaID, shipList))
+
+    def getMetaIdToName(self) -> dict:
+        return {getMetaID(ID): name for ID, name in self.getShipIdToName().items()}
+
+    def getMetaNameToId(self) -> dict:
+        return {name: MetaID for MetaID, name in self.getMetaIdToName().items()}

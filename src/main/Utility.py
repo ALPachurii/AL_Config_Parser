@@ -13,3 +13,12 @@ def isKagaBB(ID: int) -> bool:
     :return:
     """
     return str(ID)[slice(0, 5)] == "30507"
+
+
+def getMetaID(ID: int) -> int:
+    """
+    get the id of the meta ship of this ship
+    :param ID:
+    :return:
+    """
+    return int(str(ID)[slice(0, -1)])
