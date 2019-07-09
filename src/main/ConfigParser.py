@@ -1,9 +1,9 @@
 import json
-from src.main.Ships import *
-from src.main.MetaShips import *
+from src.main.Ships import Ship, SurfaceShip, Submarine
+from src.main.MetaShips import MetaShip, MetaSurfaceShip, MetaSubmarine
 from src.main.Utility import *
 from src.main.NationList import getNationList
-import typing
+from typing import Dict, List, Set
 
 
 class ConfigParser:
@@ -64,7 +64,7 @@ class ConfigParser:
     def getSkillExp(self, skillLevel: int) -> dict:
         pass
 
-    def getAttrDict(self) -> dict:
+    def getAttrDict(self) -> Dict[int, str]:
         """
         This method generates an ship attribute info dict
 
@@ -91,14 +91,14 @@ class ConfigParser:
         nationList = getNationList()
         return nationList[nationID]
 
-    def getShipList(self) -> list:
+    def getShipList(self) -> Set[int]:
         """
         generates ship id list, automatically filters non-collectable ships
         :return: list of all collectable ship ids
         """
-        return [int(ID) for ID, _ in self.shipStatisticDict.items() if not isFiltered(int(ID))]
+        return {int(ID) for ID, _ in self.shipStatisticDict.items() if not isFiltered(int(ID))}
 
-    def getShipIdToName(self) -> dict:
+    def getShipIdToName(self) -> Dict[int, str]:
         """
         generates a map from shipID to ship's English name
         :return: a dict, keys are ship id (int), values are ship name (string)
@@ -107,7 +107,7 @@ class ConfigParser:
                      + (" BB" if isKagaBB(ID) else "") + " "
                      + "(" + self.shipStatisticDict[str(ID)]['english_name'] + ")") for ID in self.getShipList()}
 
-    def getShipNameToId(self) -> dict:
+    def getShipNameToId(self) -> Dict[str, int]:
         """
         generates a map from ship's English name to a list of its ship IDs
         :return: a dict, keys are ship name (string), values are a list of ship id (int)
@@ -117,7 +117,7 @@ class ConfigParser:
             nameToId[name].append(ID)
         return nameToId
 
-    def getMetaShipList(self) -> typing.Set[int]:
+    def getMetaShipList(self) -> Set[int]:
         """
         generates meta ship ID list, automatically filters NPC ships
         :return: list of meta ship id
@@ -125,8 +125,8 @@ class ConfigParser:
         shipList = self.getShipList()
         return set(map(getMetaID, shipList))
 
-    def getMetaIdToName(self) -> dict:
+    def getMetaIdToName(self) -> Dict[int, str]:
         return {getMetaID(ID): name for ID, name in self.getShipIdToName().items()}
 
-    def getMetaNameToId(self) -> dict:
+    def getMetaNameToId(self) -> Dict[str, int]:
         return {name: MetaID for MetaID, name in self.getMetaIdToName().items()}

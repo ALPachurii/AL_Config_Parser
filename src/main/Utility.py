@@ -6,6 +6,7 @@ def isFiltered(ID: int) -> bool:
     """
     return 900000 <= ID <= 901000
 
+
 def isKagaBB(ID: int) -> bool:
     """
     check if this ship is Kaga BB
