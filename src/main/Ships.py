@@ -8,8 +8,7 @@ class Ship:
     Supertype of SurfaceShip and Submarine. Ship class stores all info of a ship and has methods to access them.
     """
 
-    def __init__(self, statDict: dict, dataDict: dict, fleetTechStat: dict):
-        self.nationality = statDict["nationality"]
+    def __init__(self, statDict: dict, dataDict: dict):
         self.id = statDict["id"]
         self.name = statDict["name"]
         self.englishName = statDict["english_name"]
@@ -27,13 +26,9 @@ class Ship:
         self.equipPreloadList = statDict["preload_count"]  # equipment preload list
         self.fixedEquipList = statDict["fix_equip_list"]  # "magic cannon"
         self.equipBaseList = statDict["base_list"]  # equipment base count list
-
-        self.fleetTechPoint = [fleetTechStat["pt_get"], fleetTechStat["pt_upgrage"], fleetTechStat["pt_level"]]
-        self.fleetStatBonus = [{"attr": fleetTechStat["add_get_attr"], "value": fleetTechStat["add_get_value"]},
-                               {"attr": fleetTechStat["add_level_attr"], "value": fleetTechStat["add_level_value"]}]
-
         self.equipTypeList = [dataDict["equip_1"], dataDict["equip_2"], dataDict["equip_3"], dataDict["equip_4"],
                               dataDict["equip_5"]]
+
         self.skillList = dataDict["buff_list_display"]
 
     def getStat(self, statID: int, level: int, affBonus: int) -> float:
@@ -124,28 +119,6 @@ class Ship:
         """
         return self.equipBaseList[equipSlot]
 
-    def getFleetTechPoint(self, stage: int) -> int:
-        """
-        returns the amount of tech points you get from reaching the stage
-        :param stage: the stage, 0 means acquiring ship, 1 means mlb-ing, 2 means fully leveling
-        :return: tech points, integer
-        """
-        if stage == 0 or stage == 1 or stage == 2:
-            return self.fleetTechPoint[stage]
-        else:
-            raise ValueError("stage should be 0 - 2")
-
-    def getFleetStatBonus(self, stage: int) -> Tuple[int, int]:
-        """
-        get the fleet stat bonus you get from reaching the stage
-        :param stage: the stage, integer, 0 means acquiring ship, 1 means fully leveling
-        :return: a tuple consist of stat type (integer) and stat value (integer)
-        """
-        if stage == 0 or stage == 1:
-            return self.fleetStatBonus[stage]["attr"], self.fleetStatBonus[stage]["value"]
-        else:
-            raise ValueError("stage should be 0 or 1")
-
     def getSkillList(self) -> List[int]:
         """
         get the skill list of this ship
@@ -174,15 +147,13 @@ class Ship:
                  "Stars: {stars}\n".format(stars=self.star) + \
                  "Skills: {skill}\n".format(skill=self.skillList) + \
                  "EquipType: {equips}\n".format(equips=self.equipTypeList) + \
-                 "EquipBase: {equipBase}\n".format(equipBase=self.equipBaseList) + \
-                 "FleetPT: {techPoint}\n".format(techPoint=self.fleetTechPoint) + \
-                 "FleetStatBonus: {techStatBonus}\n".format(techStatBonus=self.fleetStatBonus)
+                 "EquipBase: {equipBase}\n".format(equipBase=self.equipBaseList)
         return string
 
 
 class SurfaceShip(Ship):
-    def __init__(self, statDict: dict, dataDict: dict, fleetTechStat: dict):
-        super(SurfaceShip, self).__init__(statDict, dataDict, fleetTechStat)
+    def __init__(self, statDict: dict, dataDict: dict):
+        super(SurfaceShip, self).__init__(statDict, dataDict)
         self.isSubmarine = False
         self.isSurfaceShip = True
 
@@ -202,8 +173,8 @@ class SurfaceShip(Ship):
 
 
 class Submarine(Ship):
-    def __init__(self, statDict: dict, dataDict: dict, fleetTechStat: dict):
-        super(Submarine, self).__init__(statDict, dataDict, fleetTechStat)
+    def __init__(self, statDict: dict, dataDict: dict):
+        super(Submarine, self).__init__(statDict, dataDict)
         self.isSubmarine = True
         self.isSurfaceShip = False
         self.oxygen = statDict["oxy_max"]

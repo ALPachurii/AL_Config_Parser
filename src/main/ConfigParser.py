@@ -1,6 +1,5 @@
 import json
 from src.main.Ships import Ship, SurfaceShip, Submarine
-from src.main.MetaShips import MetaShip, MetaSurfaceShip, MetaSubmarine
 from src.main.Utility import *
 from src.main.NationList import getNationList
 from typing import Dict, List, Set
@@ -19,7 +18,7 @@ class ConfigParser:
         :param path: the path to "sharecfg" folder, must be absolute path
         """
 
-        def loadConfig(configName: str):
+        def loadConfig(configName: str) -> Dict:
             configFile = open(path + configName)
             config = json.load(configFile)
             config.pop('all')
@@ -30,6 +29,9 @@ class ConfigParser:
         self.shipDataDict = loadConfig("ship_data_template")
         self.attrDict = loadConfig("attribute_info_by_type")
         self.fleetTechDict = loadConfig("fleet_tech_ship_template")
+        self.shipGroupDict = loadConfig("ship_data_group")
+        self.shipRefitDict = loadConfig("ship_data_trans")
+        self.refitDataDict = loadConfig("transform_data_template")
 
     def getShip(self, shipID: int) -> Ship:
         """
@@ -37,23 +39,28 @@ class ConfigParser:
         It will either be a SurfaceShip or a Submarine
 
         :param shipID: the ID of that ship
-        :return: SurfaceShip object or Submarine object depending on it's stat
+        :return: SurfaceShip object or Submarine object depending on its stat
         """
         ID = str(shipID)
         if self.shipStatisticDict[ID]["oxy_max"] == 0:
-            return SurfaceShip(self.shipStatisticDict[ID], self.shipDataDict[ID], self.fleetTechDict[ID[slice(0, -1)]])
+            return SurfaceShip(self.shipStatisticDict[ID], self.shipDataDict[ID])
         else:
-            return Submarine(self.shipStatisticDict[ID], self.shipDataDict[ID], self.fleetTechDict[ID[slice(0, -1)]])
+            return Submarine(self.shipStatisticDict[ID], self.shipDataDict[ID])
 
-    def getMetaShip(self, metaShipID: int) -> MetaShip:
-        ID = str(metaShipID)
-        maxLimitBreakID = ID + "4"
-        if self.shipStatisticDict[maxLimitBreakID]["oxy_max"] == 0:
-            return MetaSurfaceShip(self.shipStatisticDict[maxLimitBreakID], self.shipDataDict[maxLimitBreakID],
-                                   self.fleetTechDict[ID])
-        else:
-            return MetaSubmarine(self.shipStatisticDict[maxLimitBreakID], self.shipDataDict[maxLimitBreakID],
-                                 self.fleetTechDict[ID])
+    def getMetaShip(self, metaId: int):
+        """
+        Creates MetaShip object from it's id metaId
+
+        :param metaId: integer, the in game id of that metaship, usually 1-3 digits
+        :return: MetaShip object
+        """
+        from src.main.MetaShips import MetaShip
+
+        groupId = self.getGroupIdFromMetaId(metaId)
+        hasFleetTech = str(groupId) in self.fleetTechDict
+        return MetaShip(self.shipGroupDict[str(metaId)], self, hasFleetTech, self.fleetTechDict.get(str(groupId)),
+                        self.shipRefitDict.get(str(groupId)))
+        pass
 
     def getWeapon(self, wepID: int) -> dict:
         pass
@@ -91,12 +98,24 @@ class ConfigParser:
         nationList = getNationList()
         return nationList[nationID]
 
-    def getShipList(self) -> Set[int]:
+    def getShipIdList(self) -> Set[int]:
         """
         generates ship id list, automatically filters non-collectable ships
         :return: list of all collectable ship ids
         """
-        return {int(ID) for ID, _ in self.shipStatisticDict.items() if not isFiltered(int(ID))}
+        result = set()
+        for _, idList in self.getGroupIdToShipId().items():
+            for i in idList:
+                result.add(i)
+        return result
+
+    def getShipList(self) -> Set[Ship]:
+        """
+        Generates a set of all unfiltered ships, debug purpose, might be removed in the future
+
+        :return: set of ship objects
+        """
+        return {self.getShip(ID) for ID in self.getShipIdList()}
 
     def getShipIdToName(self) -> Dict[int, str]:
         """
@@ -105,7 +124,7 @@ class ConfigParser:
         """
         return {ID: (self.shipStatisticDict[str(ID)]['name']
                      + (" BB" if isKagaBB(ID) else "") + " "
-                     + "(" + self.shipStatisticDict[str(ID)]['english_name'] + ")") for ID in self.getShipList()}
+                     + "(" + self.shipStatisticDict[str(ID)]['english_name'] + ")") for ID in self.getShipIdList()}
 
     def getShipNameToId(self) -> Dict[str, int]:
         """
@@ -117,16 +136,36 @@ class ConfigParser:
             nameToId[name].append(ID)
         return nameToId
 
-    def getMetaShipList(self) -> Set[int]:
+    def getGroupIdList(self) -> Set[int]:
         """
-        generates meta ship ID list, automatically filters NPC ships
-        :return: list of meta ship id
+        Generates a set of groupIds of all meta ships
+
+        :return: set of all meta ships' groupId
         """
-        shipList = self.getShipList()
-        return set(map(getMetaID, shipList))
+        return {groupDict["group_type"] for _, groupDict in self.shipDataDict.items()}
 
-    def getMetaIdToName(self) -> Dict[int, str]:
-        return {getMetaID(ID): name for ID, name in self.getShipIdToName().items()}
+    def getGroupIdToShipId(self) -> Dict[int, List[int]]:
+        """
+        generates a map from meta ship IDs to ships' ID
+        :return: a dict, keys are IDs of meta ship, values are list of ship ids corresponding to that meta ship
+        """
+        result = {}
+        for shipId, groupDict in self.shipDataDict.items():
+            shipId = int(shipId)
+            metaId = groupDict["group_type"]
+            if not isFiltered(shipId):
+                if metaId not in result:
+                    result[metaId] = []
+                result[metaId].append(shipId)
+        return result
 
-    def getMetaNameToId(self) -> Dict[str, int]:
-        return {name: MetaID for MetaID, name in self.getMetaIdToName().items()}
+    def getGroupIdFromMetaId(self, metaId: int) -> Dict[int, int]:
+        """
+        Returns the corresponding groupId of the meta ship with id metaId
+
+        :param metaId: integer, metaId of that meta ship
+        :return: groupId, integer
+        """
+        for _, data in self.shipGroupDict.items():
+            if data["code"] == metaId:
+                return data["group_type"]

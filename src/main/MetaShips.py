@@ -1,96 +1,77 @@
-from src.main.Ships import Ship, SurfaceShip, Submarine
-from typing import List
+from typing import Dict, Union, List, Tuple, Optional
+from src.main.ConfigParser import ConfigParser
 
 
-class MetaShip(Ship):
+class MetaShip:
     """
-    MetaShip is an abstraction of all of its subships, its stats are the same as mlb version of its subship
+    Attributes:
+        ships               A map from int (0-3, indicating it's limit break level) to ship object
+        groupId             A int, usually 5 digits, sometimes 6 digits, the "group_type" of a meta ship
+        id                  A int, usually the in-game id of this ship (for example USS Cassin's id is 005)
+                            for research ships their ids are 20000 + in-game id
     """
+    def __init__(self, groupDict: Dict[str, Union[int, List]], parser: ConfigParser, hasFleetTech: bool, *args: Dict):
+        self.id = groupDict["code"]
+        self.groupId = groupDict["group_type"]
+        self.hullType = groupDict["type"]
+        self.refitHullType = groupDict["trans_type"]
+        self.hasRefit = self.refitHullType != 0
+        self.refitSkills = groupDict["trans_skill"]
+        self.nationality = groupDict["nationality"]
 
-    def __init__(self, statDict: dict, dataDict: dict, fleetTechStat: dict):
-        Ship.__init__(self, statDict, dataDict, fleetTechStat)
-        self.id = int(str(self.id)[slice(0, -1)])
+        self.hasFleetTech = hasFleetTech
+        if self.hasFleetTech:
+            fleetTechDict = args[0]
+            self.fleetTechPoint = [fleetTechDict["pt_get"], fleetTechDict["pt_upgrage"], fleetTechDict["pt_level"]]
+            self.fleetStatBonus = [{"attr": fleetTechDict["add_get_attr"], "value": fleetTechDict["add_get_value"]},
+                                   {"attr": fleetTechDict["add_level_attr"], "value": fleetTechDict["add_level_value"]}]
+        else:
+            self.fleetTechPoint = [None, None, None]
+            self.fleetStatBonus = [{}, {}]
 
+        self.ships = {}
+        self.refitShip = None
+        for shipId in parser.getGroupIdToShipId()[self.groupId]:
+            if str(self.groupId) in str(shipId):
+                suffix = int(str(shipId)[-1])
+                self.ships[suffix - 1] = parser.getShip(shipId)
+            else:
+                self.refitShip = parser.getShip(shipId)
+        self.changeShipUponRefit = self.refitShip is not None
+        self.changeHullTypeUponRefit = self.hullType == self.refitHullType
 
-class MetaSurfaceShip(MetaShip):
-    def __init__(self, statDict: dict, dataDict: dict, fleetTechStat: dict):
-        MetaShip.__init__(self, statDict, dataDict, fleetTechStat)
-        self.isSubmarine = False
-        self.isSurfaceShip = True
+        refitNodeWithCoord = {}  # dict, keys are retrofit node ids, values are coordinates tuple(row, col)
+        if self.hasRefit:
+            refitDict = args[1]
+            refitList = refitDict["transform_list"]
+            zipped = list(zip(refitList, range(1, 7)))
+            for i in zipped:
+                colData, col = i
+                for nodeData in colData:
+                    row = nodeData[0] - 1
+                    refitNode = nodeData[1]
+                    refitNodeWithCoord[refitNode] = (row, col)
 
-    def isSubmarine(self) -> bool:
+    def getFleetTechPoint(self, stage: int) -> Optional[int]:
         """
-        check if this ship is submarine
-        :return: true if this is a submarine otherwise false
+        returns the amount of tech points you get from reaching the stage
+        :param stage: the stage, 0 means acquiring ship, 1 means mlb-ing, 2 means fully leveling
+        :return: tech points, integer
         """
-        return self.isSubmarine
+        if stage == 0 or stage == 1 or stage == 2:
+            return self.fleetTechPoint[stage]
+        else:
+            raise ValueError("stage should be 0 - 2")
 
-    def isSurfaceShip(self) -> bool:
+    def getFleetStatBonus(self, stage: int) -> Tuple[int, int]:
         """
-        check if this ship is surface ship
-        :return: true if this is a surface ship otherwise false
+        get the fleet stat bonus you get from reaching the stage
+        :param stage: the stage, integer, 0 means acquiring ship, 1 means fully leveling
+        :return: a tuple consist of stat type (integer) and stat value (integer)
         """
-        return self.isSurfaceShip
+        if stage == 0 or stage == 1:
+            return self.fleetStatBonus[stage]["attr"], self.fleetStatBonus[stage]["value"]
+        else:
+            raise ValueError("stage should be 0 or 1")
 
-
-class MetaSubmarine(MetaShip):
-    def __init__(self, statDict: dict, dataDict: dict, fleetTechStat: dict):
-        MetaShip.__init__(self, statDict, dataDict, fleetTechStat)
-        self.isSubmarine = True
-        self.isSurfaceShip = False
-        self.oxygen = statDict["oxy_max"]
-        self.oxyCost = statDict["oxy_cost"]
-        self.oxyRecovery = statDict["oxy_recovery"]
-        self.ammo = statDict["ammo"]
-        self.surfaceDuration = statDict["attack_duration"]
-        self.huntingRangeLevel = statDict["huntingrange_level"]
-        self.huntingRange = statDict["hunting_range"]
-
-    def isSubmarine(self) -> bool:
-        """
-        check if this ship is submarine
-        :return: true if this is a submarine otherwise false
-        """
-        return self.isSubmarine
-
-    def isSurfaceShip(self) -> bool:
-        """
-        check if this ship is surface ship
-        :return: true if this is a surface ship otherwise false
-        """
-        return self.isSurfaceShip
-
-    def getOxygen(self) -> int:
-        """
-        get the maximum oxygen of this ship
-        :return: oxygen, integer
-        """
-        return self.oxygen
-
-    def getOxyCost(self) -> int:
-        """
-        get the oxygen cost per second of this ship
-        :return: oxygen consumption speed, integer
-        """
-        return self.oxyCost
-
-    def getAmmo(self) -> int:
-        """
-        get the ammo count of this ship
-        :return: ammo count, integer
-        """
-        return self.ammo
-
-    def getHuntingRange(self) -> List[List[List[int]]]:
-        """
-        get the hunting range of this ship
-        :return: hunting range, list of lists of lists of integers
-        """
-        return self.huntingRange
-
-    def getHuntingRangeLevel(self) -> int:
-        """
-        get the hunting range level of this ship
-        :return: hunting range level, integer
-        """
-        return self.huntingRangeLevel
+    pass
