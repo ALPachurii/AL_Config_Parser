@@ -166,7 +166,7 @@ class ConfigParser:
 
         :return: set of all meta ships' groupId
         """
-        return {groupDict["group_type"] for _, groupDict in self.shipDataDict.items()}
+        return {groupDict["group_type"] for _, groupDict in self.shipGroupDict.items()}
 
     def getGroupIdToShipId(self) -> Dict[int, List[int]]:
         """
