@@ -2,6 +2,7 @@ import json
 from src.main.Ships import Ship, SurfaceShip, Submarine
 from src.main.Utility import *
 from src.main.NationList import getNationList
+from src.main.RefitNode import RefitNode
 from typing import Dict, List, Set
 
 
@@ -49,7 +50,7 @@ class ConfigParser:
 
     def getMetaShip(self, metaId: int):
         """
-        Creates MetaShip object from it's id metaId
+        Creates MetaShip object from its id metaId
 
         :param metaId: integer, the in game id of that metaship, usually 1-3 digits
         :return: MetaShip object
@@ -60,7 +61,17 @@ class ConfigParser:
         hasFleetTech = str(groupId) in self.fleetTechDict
         return MetaShip(self.shipGroupDict[str(metaId)], self, hasFleetTech, self.fleetTechDict.get(str(groupId)),
                         self.shipRefitDict.get(str(groupId)))
-        pass
+
+    def getRefitNode(self, refitNodeId: int) -> RefitNode:
+        """
+        Creates a RefitNode object from its id
+
+        :param refitNodeId: integer, the id of that refit node
+        :return: RefitNode object
+        """
+        reversedAttrDict = self.getReversedAttrDict()
+        nodeDict = self.refitDataDict[str(refitNodeId)]
+        return RefitNode(nodeDict, reversedAttrDict)
 
     def getWeapon(self, wepID: int) -> dict:
         pass
@@ -83,10 +94,18 @@ class ConfigParser:
         """
         This method returns an attribute's name based on its ID
 
-        :param attrID: the ID of the attribute, range from 1 to 9
+        :param attrID: the ID of the attribute, range from 1 to 12
         :return: attribute's name
         """
         return self.getAttrDict()[attrID]
+
+    def getReversedAttrDict(self) -> Dict[str, int]:
+        """
+        Generates a map from attr name to attr id
+
+        :return: A dict, keys are attr names, values are attr ids
+        """
+        return {name: ID for ID, name in self.getAttrDict().items()}
 
     @staticmethod
     def getNation(nationID: int) -> str:
