@@ -31,6 +31,8 @@ class MetaShip:
 
         self.ships = {}
         self.refitShip = None
+        self.changeShipUponRefit = None
+        self.changeHullTypeUponRefit = None
         for shipId in parser.getGroupIdToShipId()[self.groupId]:
             if str(self.groupId) in str(shipId):
                 suffix = int(str(shipId)[-1])
@@ -38,7 +40,8 @@ class MetaShip:
             else:
                 self.refitShip = parser.getShip(shipId)
         self.changeShipUponRefit = self.refitShip is not None
-        self.changeHullTypeUponRefit = self.hullType == self.refitHullType
+        if self.changeShipUponRefit:
+            self.changeHullTypeUponRefit = self.hullType != self.refitHullType
 
         refitNodeWithCoord = {}  # dict, keys are retrofit node ids, values are coordinates tuple(row, col)
         if self.hasRefit:
