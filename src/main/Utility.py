@@ -4,6 +4,7 @@ import re
 def isFiltered(ID: int) -> bool:
     """
     check whether a shipID should be filtered
+
     :param ID: shipID
     :return: bool
     """
@@ -13,6 +14,7 @@ def isFiltered(ID: int) -> bool:
 def isKagaBB(ID: int) -> bool:
     """
     check if this ship is Kaga BB
+
     :param ID:
     :return:
     """
@@ -22,6 +24,7 @@ def isKagaBB(ID: int) -> bool:
 def getMetaID(ID: int) -> int:
     """
     get the id of the meta ship of this ship
+
     :param ID:
     :return:
     """

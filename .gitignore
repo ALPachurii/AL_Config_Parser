@@ -128,3 +128,6 @@ dmypy.json
 
 # Pycharm
 .idea
+
+# Sphinx Source
+sphinx

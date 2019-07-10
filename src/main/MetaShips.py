@@ -4,11 +4,10 @@ from src.main.ConfigParser import ConfigParser
 
 class MetaShip:
     """
-    Attributes:
-        ships               A map from int (0-3, indicating it's limit break level) to ship object
-        groupId             A int, usually 5 digits, sometimes 6 digits, the "group_type" of a meta ship
-        id                  A int, usually the in-game id of this ship (for example USS Cassin's id is 005)
-                            for research ships their ids are 20000 + in-game id
+    :param ships:               A map from int (0-3, indicating it's limit break level) to ship object
+    :param groupId:             A int, usually 5 digits, sometimes 6 digits, the "group_type" of a meta ship
+    :param id:                  A int, usually the in-game id of this ship (for example USS Cassin's id is 005)
+                                for research ships their ids are 20000 + in-game id
     """
     def __init__(self, groupDict: Dict[str, Union[int, List]], parser: ConfigParser, hasFleetTech: bool, *args: Dict):
         self.id = groupDict["code"]
@@ -58,6 +57,7 @@ class MetaShip:
     def getFleetTechPoint(self, stage: int) -> Optional[int]:
         """
         returns the amount of tech points you get from reaching the stage
+
         :param stage: the stage, 0 means acquiring ship, 1 means mlb-ing, 2 means fully leveling
         :return: tech points, integer
         """
@@ -68,7 +68,8 @@ class MetaShip:
 
     def getFleetStatBonus(self, stage: int) -> Tuple[int, int]:
         """
-        get the fleet stat bonus you get from reaching the stage
+        gets the fleet stat bonus you get from reaching the stage
+
         :param stage: the stage, integer, 0 means acquiring ship, 1 means fully leveling
         :return: a tuple consist of stat type (integer) and stat value (integer)
         """

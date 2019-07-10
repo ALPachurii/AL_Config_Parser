@@ -92,6 +92,7 @@ class ConfigParser:
     def getNation(nationID: int) -> str:
         """
         static method. Returns nation name
+
         :param nationID: the id of that nation
         :return: nation name
         """
@@ -101,6 +102,7 @@ class ConfigParser:
     def getShipIdList(self) -> Set[int]:
         """
         generates ship id list, automatically filters non-collectable ships
+
         :return: list of all collectable ship ids
         """
         result = set()
@@ -120,6 +122,7 @@ class ConfigParser:
     def getShipIdToName(self) -> Dict[int, str]:
         """
         generates a map from shipID to ship's English name
+
         :return: a dict, keys are ship id (int), values are ship name (string)
         """
         return {ID: (self.shipStatisticDict[str(ID)]['name']
@@ -129,6 +132,7 @@ class ConfigParser:
     def getShipNameToId(self) -> Dict[str, int]:
         """
         generates a map from ship's English name to a list of its ship IDs
+
         :return: a dict, keys are ship name (string), values are a list of ship id (int)
         """
         nameToId = {name: [] for ID, name in self.getShipIdToName().items()}
@@ -147,6 +151,7 @@ class ConfigParser:
     def getGroupIdToShipId(self) -> Dict[int, List[int]]:
         """
         generates a map from meta ship IDs to ships' ID
+
         :return: a dict, keys are IDs of meta ship, values are list of ship ids corresponding to that meta ship
         """
         result = {}

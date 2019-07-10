@@ -34,6 +34,7 @@ class Ship:
     def getStat(self, statID: int, level: int, affBonus: int) -> float:
         """
         calculates ship's stat at certain level and affinity bonus
+
         :param statID: id of that attribute/stat
         :param level: the level, range from 1 to 120
         :param affBonus: the affinity bonus, range from 0 (50 affinity) to 12 (oath and 200 affinity)
@@ -54,6 +55,7 @@ class Ship:
     def getFlooredStat(self, statID: int, level: int, affBonus: int) -> int:
         """
         calculates ship's stat at certain level and affinity bonus, and returns the rounded down value
+
         :param statID: id of that attribute/stat
         :param level: the level, range from 1 to 120
         :param affBonus: the affinity bonus, range from 0 (50 affinity) to 12 (oath and 200 affinity)
@@ -64,6 +66,7 @@ class Ship:
     def getStar(self) -> int:
         """
         get the star of this ship
+
         :return: star, integer
         """
         return self.star
@@ -71,6 +74,7 @@ class Ship:
     def getRarity(self) -> int:
         """
         get the rarity of this ship
+
         :return: rarity, integer, common: 1, rare: 2, elite: 3, super rare: 4, PR: 5, DR: 6
         """
         return self.rarity
@@ -78,6 +82,7 @@ class Ship:
     def getName(self) -> str:
         """
         get the name of this ship
+
         :return: name, string
         """
         return self.name
@@ -85,6 +90,7 @@ class Ship:
     def getEnglishName(self) -> str:
         """
         get the English name of this ship
+
         :return: name with prefix, string
         """
         return self.englishName
@@ -92,6 +98,7 @@ class Ship:
     def getHullType(self) -> int:
         """
         get the hull type number of this ship
+
         :return: hull type number, integer, range from 1 to 18
         """
         return self.hullType
@@ -99,6 +106,7 @@ class Ship:
     def getID(self) -> int:
         """
         get the id of this ship
+
         :return: id, integer
         """
         return self.id
@@ -106,6 +114,7 @@ class Ship:
     def getEquipmentProficiency(self, equipSlot: int) -> float:
         """
         get the equipment proficiency of a certain slot
+
         :param equipSlot: the specific slot, integer, range from 0 - 2, 0 is the first weapon
         :return: the proficiency, float number
         """
@@ -114,6 +123,7 @@ class Ship:
     def getEquipBase(self, equipSlot: int) -> int:
         """
         get the equipment base count of a certain slot
+
         :param equipSlot: the specific slot, integer, range from 0 - 2, 0 is the first weapon
         :return: the base count, integer
         """
@@ -122,6 +132,7 @@ class Ship:
     def getSkillList(self) -> List[int]:
         """
         get the skill list of this ship
+
         :return: skill list, list of integer
         """
         return self.skillList
@@ -129,6 +140,7 @@ class Ship:
     def getEquipmentType(self, equipSlot: int) -> int:
         """
         get the equipment type of a specific slot
+
         :param equipSlot: the specific slot, integer, range from 0 to 4
         :return: equipment type, integer
         """
@@ -160,6 +172,7 @@ class SurfaceShip(Ship):
     def isSubmarine(self) -> bool:
         """
         check if this ship is submarine
+
         :return: true if this is a submarine otherwise false
         """
         return self.isSubmarine
@@ -167,6 +180,7 @@ class SurfaceShip(Ship):
     def isSurfaceShip(self) -> bool:
         """
         check if this ship is surface ship
+
         :return: true if this is a surface ship otherwise false
         """
         return self.isSurfaceShip
@@ -188,6 +202,7 @@ class Submarine(Ship):
     def isSubmarine(self) -> bool:
         """
         check if this ship is submarine
+
         :return: true if this is a submarine otherwise false
         """
         return self.isSubmarine
@@ -195,6 +210,7 @@ class Submarine(Ship):
     def isSurfaceShip(self) -> bool:
         """
         check if this ship is surface ship
+
         :return: true if this is a surface ship otherwise false
         """
         return self.isSurfaceShip
@@ -202,6 +218,7 @@ class Submarine(Ship):
     def getOxygen(self) -> int:
         """
         get the maximum oxygen of this ship
+
         :return: oxygen, integer
         """
         return self.oxygen
@@ -209,6 +226,7 @@ class Submarine(Ship):
     def getOxyCost(self) -> int:
         """
         get the oxygen cost per second of this ship
+
         :return: oxygen consumption speed, integer
         """
         return self.oxyCost
@@ -216,6 +234,7 @@ class Submarine(Ship):
     def getAmmo(self) -> int:
         """
         get the ammo count of this ship
+
         :return: ammo count, integer
         """
         return self.ammo
@@ -223,6 +242,7 @@ class Submarine(Ship):
     def getHuntingRange(self) -> List[List[List[int]]]:
         """
         get the hunting range of this ship
+
         :return: hunting range, list of lists of lists of integers
         """
         return self.huntingRange
@@ -230,6 +250,7 @@ class Submarine(Ship):
     def getHuntingRangeLevel(self) -> int:
         """
         get the hunting range level of this ship
+
         :return: hunting range level, integer
         """
         return self.huntingRangeLevel
