@@ -169,22 +169,6 @@ class SurfaceShip(Ship):
         self.isSubmarine = False
         self.isSurfaceShip = True
 
-    def isSubmarine(self) -> bool:
-        """
-        check if this ship is submarine
-
-        :return: true if this is a submarine otherwise false
-        """
-        return self.isSubmarine
-
-    def isSurfaceShip(self) -> bool:
-        """
-        check if this ship is surface ship
-
-        :return: true if this is a surface ship otherwise false
-        """
-        return self.isSurfaceShip
-
 
 class Submarine(Ship):
     def __init__(self, statDict: dict, dataDict: dict):
@@ -198,22 +182,6 @@ class Submarine(Ship):
         self.surfaceDuration = statDict["attack_duration"]
         self.huntingRangeLevel = statDict["huntingrange_level"]
         self.huntingRange = statDict["hunting_range"]
-
-    def isSubmarine(self) -> bool:
-        """
-        check if this ship is submarine
-
-        :return: true if this is a submarine otherwise false
-        """
-        return self.isSubmarine
-
-    def isSurfaceShip(self) -> bool:
-        """
-        check if this ship is surface ship
-
-        :return: true if this is a surface ship otherwise false
-        """
-        return self.isSurfaceShip
 
     def getOxygen(self) -> int:
         """
