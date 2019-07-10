@@ -59,8 +59,9 @@ class ConfigParser:
 
         groupId = self.getGroupIdFromMetaId(metaId)
         hasFleetTech = str(groupId) in self.fleetTechDict
-        return MetaShip(self.shipGroupDict[str(metaId)], self, hasFleetTech, self.fleetTechDict.get(str(groupId)),
-                        self.shipRefitDict.get(str(groupId)))
+        return MetaShip(self.shipGroupDict[str(metaId)], self, hasFleetTech,
+                        fleetTechDict=self.fleetTechDict.get(str(groupId)),
+                        refitDict=self.shipRefitDict.get(str(groupId)))
 
     def getRefitNode(self, refitNodeId: int) -> RefitNode:
         """
