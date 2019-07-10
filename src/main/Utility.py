@@ -1,3 +1,6 @@
+import re
+
+
 def isFiltered(ID: int) -> bool:
     """
     check whether a shipID should be filtered
@@ -23,3 +26,7 @@ def getMetaID(ID: int) -> int:
     :return:
     """
     return int(str(ID)[slice(0, -1)])
+
+
+def removeHtmlTag(code: str) -> str:
+    return re.sub("<.*?>", "", code)
