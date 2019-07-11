@@ -123,7 +123,7 @@ class Ship:
         """
         return self.skillList
 
-    def getEquipmentType(self, equipSlot: int) -> int:
+    def getEquipmentType(self, equipSlot: int) -> List[int]:
         """
         get the equipment type of a specific slot
 

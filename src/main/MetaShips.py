@@ -137,6 +137,48 @@ class MetaShip:
                          for nodeWithCoord in self.refitNodeListWithCoord]) if refitBonus else 0
         return refitProf + baseProf
 
+    def getEquipBaseCount(self, equipSlot: int, lbLevel: int, isRefitted: bool) -> int:
+        """
+        Gets the base count of a certain equipment slot
+
+        :param equipSlot: integer, range from 1 to 3, the slot number
+        :param lbLevel: integer, range from 0 to 3, the limit break level
+        :param isRefitted: boolean
+        :return: integer, the base count
+        """
+        if equipSlot < 1 or equipSlot > 3:
+            raise ValueError("equipSlot ({}) out of bound".format(equipSlot))
+        elif lbLevel < 0 or lbLevel > 3:
+            raise ValueError("lbLevel ({}) out of bound".format(lbLevel))
+        elif lbLevel != 3 and isRefitted:
+            raise ValueError("Cannot modernize without fully limit break the ship")
+
+        if self.changeHullTypeUponRefit and isRefitted:
+            return self.refitShip.getEquipBase(equipSlot)
+        else:
+            return self.ships[lbLevel].getEquipBase(equipSlot)
+
+    def getEquipType(self, equipSlot: int, lbLevel: int, isRefitted: bool) -> List[int]:
+        """
+        Gets a list of allowed equipment type of a certain equipment slot
+
+        :param equipSlot: integer, range from 1 to 5, the slot number (1 is the first slot)
+        :param lbLevel: integer, range from 0 to 3, the limit break level
+        :param isRefitted: boolean
+        :return: List of integers, a list containing all allowed equipment type
+        """
+        if equipSlot < 1 or equipSlot > 5:
+            raise ValueError("equipSlot ({}) out of bound".format(equipSlot))
+        elif lbLevel < 0 or lbLevel > 3:
+            raise ValueError("lbLevel ({}) out of bound".format(lbLevel))
+        elif lbLevel != 3 and isRefitted:
+            raise ValueError("Cannot modernize without fully limit break the ship")
+
+        if self.changeHullTypeUponRefit and isRefitted:
+            return self.refitShip.getEquipmentType(equipSlot)
+        else:
+            return self.ships[lbLevel].getEquipmentType(equipSlot)
+
     def getFleetTechPoint(self, stage: int) -> Optional[int]:
         """
         returns the amount of tech points you get from reaching the stage
