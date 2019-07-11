@@ -194,3 +194,11 @@ class ConfigParser:
         for _, data in self.shipGroupDict.items():
             if data["code"] == metaId:
                 return data["group_type"]
+
+    def getMetaIdList(self) -> Set[int]:
+        """
+        Generates a set of meta ship ids
+
+        :return: set of integers, contains ids of all meta ships
+        """
+        return {int(metaId) for metaId, _ in self.shipGroupDict.items()}
