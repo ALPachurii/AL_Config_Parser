@@ -1,5 +1,7 @@
 from typing import Dict, Any, List, Union
 
+from src.main import Utility
+
 
 class RefitNode:
     def __init__(self, nodeDict: Dict[str, Any], reversedAttrDict: Dict[str, int]):
@@ -17,6 +19,9 @@ class RefitNode:
         self.itemConsumption: List[List[List[int]]] = nodeDict["use_item"]
         self.ratingBonus: List[int] = nodeDict["gear_score"]
         self.parents: List[int] = nodeDict["condition_id"]
+
+        self.description = Utility.removeHtmlTag(nodeDict["descrip"])
+        self.isModernization = self.name == "Modernization"
 
     def getId(self) -> int:
         return self.id
