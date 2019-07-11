@@ -58,21 +58,21 @@ class RefitNode:
     def getLevelLimit(self) -> int:
         return self.levelLimit
 
-    def getStatBonus(self, stage: int, statId: int) -> int:
+    def getStatBonus(self, stage: int, statId: Union[int, str]) -> float:
         """
         Gets the bonus of a certain stat from a certain stage of refit
 
-        :param stage: integer, range from 1 to malLevel, the stage of this node
+        :param stage: integer, range from 1 to malLevel or string (equip proficiency), the stage of this node
         :param statId: integer, range from 1 to 12, the id of that stat
         :return: integer, the bonus, 0 means no bonus
         """
         return self.bonus[stage - 1].get(statId, 0)
 
-    def getStatBonusSum(self, statId: int) -> int:
+    def getStatBonusSum(self, statId: Union[int, str]) -> float:
         """
         Calculates the sum of bonuses to a certain stat from all stages of this refit node
 
-        :param statId: integer, range from 1 to 12, the id of that stat
+        :param statId: integer, range from 1 to 12 or string (equip proficiency), the id of that stat
         :return: integer, the bonus, 0 means no bonus
         """
         return sum([self.bonus[level].get(statId, 0) for level in range(0, self.maxLevel)])

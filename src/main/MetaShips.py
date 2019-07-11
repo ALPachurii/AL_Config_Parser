@@ -112,6 +112,31 @@ class MetaShip:
                 else 0
             return math.floor((baseStat + strengthenStat) * (1 + affBonus / 100) + refitStat)
 
+    def getEquipProficiency(self, equipSlot: int, lbLevel: int, refitBonus: bool) -> float:
+        """
+        Calculates the equipment proficiency of a certain slot
+
+        :param equipSlot: integer, range from 1 to 4 the equipment slot, 4 means the fixed weapon on all torpedo ships
+        :param lbLevel: integer, range from 0 to 3, the limit break level
+        :param refitBonus: boolean, whether count all refit proficiency bonus
+        :return: float, the proficiency
+        """
+        if equipSlot < 1 or equipSlot > 4:
+            raise ValueError("equipSlot ({}) out of bound".format(equipSlot))
+        elif lbLevel < 0 or lbLevel > 3:
+            raise ValueError("lbLevel ({}) out of bound".format(lbLevel))
+        elif lbLevel != 3 and refitBonus:
+            raise ValueError("Cannot modernize without fully limit break the ship")
+
+        if self.changeHullTypeUponRefit and refitBonus:
+            baseProf = self.refitShip.getEquipmentProficiency(equipSlot)
+        else:
+            baseProf = self.ships[lbLevel].getEquipmentProficiency(equipSlot)
+
+        refitProf = sum([nodeWithCoord[0].getStatBonusSum("equipment_proficiency_{}".format(equipSlot))
+                         for nodeWithCoord in self.refitNodeListWithCoord]) if refitBonus else 0
+        return refitProf + baseProf
+
     def getFleetTechPoint(self, stage: int) -> Optional[int]:
         """
         returns the amount of tech points you get from reaching the stage
