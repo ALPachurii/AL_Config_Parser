@@ -1,4 +1,4 @@
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Union
 
 
 class RefitNode:
@@ -11,8 +11,9 @@ class RefitNode:
         self.useShip: bool = nodeDict["use_ship"] == 1
         self.icon: str = nodeDict["icon"]
         self.name: str = nodeDict["name"]
-        self.bonus: List[Dict[int, int]] = [{reversedAttrDict[attrName]: value for attrName, value in attrDict.items()}
-                                            for attrDict in nodeDict["effect"]]
+        self.bonus: List[Dict[Union[int, str], int]] = \
+            [{reversedAttrDict.get(attrName, attrName): value for attrName, value in attrDict.items()}
+             for attrDict in nodeDict["effect"]]
         self.itemConsumption: List[List[List[int]]] = nodeDict["use_item"]
         self.ratingBonus: List[int] = nodeDict["gear_score"]
         self.parents: List[int] = nodeDict["condition_id"]

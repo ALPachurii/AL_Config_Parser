@@ -33,6 +33,7 @@ class ConfigParser:
         self.shipGroupDict = loadConfig("ship_data_group")
         self.shipRefitDict = loadConfig("ship_data_trans")
         self.refitDataDict = loadConfig("transform_data_template")
+        self.shipStrengthenDict = loadConfig("ship_data_strengthen")
 
     def getShip(self, shipID: int) -> Ship:
         """
@@ -59,7 +60,7 @@ class ConfigParser:
 
         groupId = self.getGroupIdFromMetaId(metaId)
         hasFleetTech = str(groupId) in self.fleetTechDict
-        return MetaShip(self.shipGroupDict[str(metaId)], self, hasFleetTech,
+        return MetaShip(self.shipGroupDict[str(metaId)], self.shipStrengthenDict[str(groupId)], self, hasFleetTech,
                         fleetTechDict=self.fleetTechDict.get(str(groupId)),
                         refitDict=self.shipRefitDict.get(str(groupId)))
 

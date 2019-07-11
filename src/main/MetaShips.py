@@ -1,3 +1,4 @@
+import math
 from typing import Dict, Union, List, Tuple, Optional
 from src.main.ConfigParser import ConfigParser
 
@@ -9,8 +10,9 @@ class MetaShip:
     :param id:                  A int, usually the in-game id of this ship (for example USS Cassin's id is 005)
                                 for research ships their ids are 20000 + in-game id
     """
-    def __init__(self, groupDict: Dict[str, Union[int, List]], parser: ConfigParser, hasFleetTech: bool,
-                 **kwargs: Dict):
+
+    def __init__(self, groupDict: Dict[str, Union[int, List]], strengthenDict: Dict[str, Union[int, List[int]]],
+                 parser: ConfigParser, hasFleetTech: bool, **kwargs: Dict):
         """
         Constructor of MetaShip class
 
@@ -52,17 +54,63 @@ class MetaShip:
         if self.changeShipUponRefit:
             self.changeHullTypeUponRefit = self.hullType != self.refitHullType
 
-        refitNodeWithCoord = {}  # dict, keys are retrofit node ids, values are coordinates tuple(row, col)
+        refitNodeCoord = {}  # dict, keys are retrofit node ids, values are coordinates tuple(row, col)
         if self.hasRefit:
             refitDict = kwargs["refitDict"]
             refitList = refitDict["transform_list"]
             zipped = list(zip(refitList, range(1, 7)))
-            for i in zipped:
-                colData, col = i
+            for colData, col in zipped:
                 for nodeData in colData:
                     row = nodeData[0] - 1
                     refitNode = nodeData[1]
-                    refitNodeWithCoord[refitNode] = (row, col)
+                    refitNodeCoord[refitNode] = (row, col)
+
+        self.refitNodeListWithCoord = sorted(
+            [(parser.getRefitNode(nodeId), coord) for nodeId, coord in refitNodeCoord.items()],
+            key=lambda x: x[0].getId())
+
+        def genStrengthenDict(attrName: str):
+            withIndex = zip(range(2, 7), strengthenDict[attrName])
+            return {statId: value for statId, value in withIndex}
+
+        self.strengthenValue = genStrengthenDict("durability")
+        self.strengthenExpNeeded = genStrengthenDict("level_exp")
+        self.strengthenExpProvides = genStrengthenDict("attr_exp")
+
+        self.isResearchShip = self.id > 20000
+        self.isCollabShip = 10000 < self.id < 20000
+
+    def getStat(self, statId: int, level: int, lbLevel: int, affBonus: int,
+                refitBonus: bool, strengthenBonus: bool) -> int:
+        """
+        Calculates a stat of this meta ship at certain level, limit break level, affinity, retrofit stat and
+        strengthen state.
+
+        :param statId: integer, range from 1 to 12, the id of the stat
+        :param level: integer, range from 1 to 120, the level of the ship
+        :param lbLevel: integer, range from 0 to 3, the limit break level of the ship
+        :param affBonus: integer, range from 0 to 12, the affinity stat bonus of the ship (affBonus%)
+        :param refitBonus: boolean, is the ship refitted
+        :param strengthenBonus: boolean, is the ship fully strengthened. false means not counting strengthen bonus
+        :return:
+        """
+        if statId < 1 or statId > 12:
+            raise ValueError("statId ({}) out of bound".format(statId))
+        elif level < 1 or level > 120:
+            raise ValueError("level ({}) out of bound".format(level))
+        elif lbLevel < 0 or lbLevel > 3:
+            raise ValueError("lbLevel ({}) out of bound".format(lbLevel))
+        elif affBonus < 0 or affBonus > 12:
+            raise ValueError("affBonus ({}) out of bound".format(affBonus))
+        else:
+            if self.hasRefit and refitBonus and self.changeHullTypeUponRefit:
+                baseStat = self.refitShip.getStat(statId, level)
+            else:
+                baseStat = self.ships[lbLevel].getStat(statId, level)
+            strengthenStat = self.strengthenValue.get(statId, 0) if strengthenBonus else 0
+            refitStat = sum(map(lambda x: x[0].getStatBonusSum(statId), self.refitNodeListWithCoord)) if refitBonus \
+                else 0
+            return math.floor((baseStat + strengthenStat) * (1 + affBonus / 100) + refitStat)
 
     def getFleetTechPoint(self, stage: int) -> Optional[int]:
         """

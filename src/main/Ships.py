@@ -1,4 +1,3 @@
-import math
 from typing import List, Tuple
 from src.main.Utility import isKagaBB
 
@@ -31,37 +30,23 @@ class Ship:
 
         self.skillList = dataDict["buff_list_display"]
 
-    def getStat(self, statID: int, level: int, affBonus: int) -> float:
+    def getStat(self, statID: int, level: int) -> float:
         """
-        calculates ship's stat at certain level and affinity bonus
+        calculates ship's base stat at certain level
 
         :param statID: id of that attribute/stat
         :param level: the level, range from 1 to 120
-        :param affBonus: the affinity bonus, range from 0 (50 affinity) to 12 (oath and 200 affinity)
         :return: the stat, float number
         """
         statID -= 1
         if level < 1 or level > 120:
             raise ValueError("Level out of bound")
-        elif affBonus < 0 or affBonus > 12:
-            raise ValueError("affBonus out of bound")
         else:
             if level <= 100:
-                return (self.attrs[statID] + (level - 1) * self.attrsGrowth[statID] / 1000) * (1 + affBonus / 100)
+                return self.attrs[statID] + (level - 1) * self.attrsGrowth[statID] / 1000
             else:
-                return (self.attrs[statID] + (level - 1) * self.attrsGrowth[statID] / 1000 +
-                        (level - 100) * self.attrsGrowthExtra[statID] / 1000) * (1 + affBonus / 100)
-
-    def getFlooredStat(self, statID: int, level: int, affBonus: int) -> int:
-        """
-        calculates ship's stat at certain level and affinity bonus, and returns the rounded down value
-
-        :param statID: id of that attribute/stat
-        :param level: the level, range from 1 to 120
-        :param affBonus: the affinity bonus, range from 0 (50 affinity) to 12 (oath and 200 affinity)
-        :return: the stat, float number
-        """
-        return math.floor(self.getStat(statID, level, affBonus))
+                return self.attrs[statID] + (level - 1) * self.attrsGrowth[statID] / 1000 + \
+                       (level - 100) * self.attrsGrowthExtra[statID] / 1000
 
     def getStar(self) -> int:
         """
