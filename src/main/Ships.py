@@ -98,21 +98,22 @@ class Ship:
 
     def getEquipmentProficiency(self, equipSlot: int) -> float:
         """
-        get the equipment proficiency of a certain slot
+        get the equipment proficiency of a certain slot (including the fixed weapon for torpedo ships)
 
-        :param equipSlot: the specific slot, integer, range from 0 - 2, 0 is the first weapon
+        :param equipSlot: the specific slot, integer, range from 1 - 4, 1 is the first weapon, 4 is the fixed weapon
+                          on all torpedo ships
         :return: the proficiency, float number
         """
-        return self.proficiency[equipSlot]
+        return self.proficiency[equipSlot - 1]
 
     def getEquipBase(self, equipSlot: int) -> int:
         """
         get the equipment base count of a certain slot
 
-        :param equipSlot: the specific slot, integer, range from 0 - 2, 0 is the first weapon
+        :param equipSlot: the specific slot, integer, range from 1 - 3, 1 is the first weapon
         :return: the base count, integer
         """
-        return self.equipBaseList[equipSlot]
+        return self.equipBaseList[equipSlot - 1]
 
     def getSkillList(self) -> List[int]:
         """
@@ -129,10 +130,10 @@ class Ship:
         :param equipSlot: the specific slot, integer, range from 0 to 4
         :return: equipment type, integer
         """
-        if equipSlot in [0, 1, 2, 3, 4]:
-            return self.equipTypeList[equipSlot]
+        if equipSlot in [1, 2, 3, 4, 5]:
+            return self.equipTypeList[equipSlot - 1]
         else:
-            raise ValueError("equipSlot should be 0-4")
+            raise ValueError("equipSlot ({}) should be 1 - 5".format(equipSlot))
 
     def toString(self) -> str:
         string = "Name: {name}{kagaBB} ({nameWithPrefix})\n".format(name=self.name,
