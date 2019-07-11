@@ -67,6 +67,15 @@ class RefitNode:
         """
         return self.bonus[stage - 1].get(statId, 0)
 
+    def getStatBonusSum(self, statId: int) -> int:
+        """
+        Calculates the sum of bonuses to a certain stat from all stages of this refit node
+
+        :param statId: integer, range from 1 to 12, the id of that stat
+        :return: integer, the bonus, 0 means no bonus
+        """
+        return sum([self.bonus[level].get(statId, 0) for level in range(0, self.maxLevel)])
+
     def getStatBonusList(self) -> List[Dict[int, int]]:
         """
         Gets the raw stat bonus list
