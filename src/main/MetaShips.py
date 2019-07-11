@@ -34,8 +34,8 @@ class MetaShip:
         if self.hasFleetTech:
             fleetTechDict = kwargs["fleetTechDict"]
             self.fleetTechPoint = [fleetTechDict["pt_get"], fleetTechDict["pt_upgrage"], fleetTechDict["pt_level"]]
-            self.fleetStatBonus = [{"attr": fleetTechDict["add_get_attr"], "value": fleetTechDict["add_get_value"]},
-                                   {"attr": fleetTechDict["add_level_attr"], "value": fleetTechDict["add_level_value"]}]
+            self.fleetStatBonus = [{fleetTechDict["add_get_attr"]: fleetTechDict["add_get_value"]},
+                                   {fleetTechDict["add_level_attr"]: fleetTechDict["add_level_value"]}]
         else:
             self.fleetTechPoint = [None, None, None]
             self.fleetStatBonus = [{}, {}]
@@ -142,22 +142,25 @@ class MetaShip:
         returns the amount of tech points you get from reaching the stage
 
         :param stage: the stage, 0 means acquiring ship, 1 means mlb-ing, 2 means fully leveling
-        :return: tech points, integer
+        :return: tech points, None means no fleet tech points
         """
-        if stage == 0 or stage == 1 or stage == 2:
+        if stage in [0, 1, 2]:
             return self.fleetTechPoint[stage]
         else:
             raise ValueError("stage should be 0 - 2")
 
-    def getFleetStatBonus(self, stage: int) -> Tuple[int, int]:
+    def getFleetStatBonus(self, stage: int) -> Tuple[Optional[int], Optional[int]]:
         """
         gets the fleet stat bonus you get from reaching the stage
 
         :param stage: the stage, integer, 0 means acquiring ship, 1 means fully leveling
-        :return: a tuple consist of stat type (integer) and stat value (integer)
+        :return: a tuple consist of stat type (integer or None) and stat value (integer or None)
         """
-        if stage == 0 or stage == 1:
-            return self.fleetStatBonus[stage]["attr"], self.fleetStatBonus[stage]["value"]
+        if stage in [0, 1]:
+            if len(self.fleetStatBonus[stage]) == 0:
+                return None, None
+            for statId, value in self.fleetStatBonus[stage].items():
+                return statId, value
         else:
             raise ValueError("stage should be 0 or 1")
 
