@@ -222,4 +222,22 @@ class MetaShip:
         else:
             raise ValueError("stage should be 0 or 1")
 
+    def getAmmo(self) -> int:
+        if self.isSubmarine:
+            return self.ships[0].getAmmo()
+        else:
+            raise NotImplementedError("getAmmo method for surface ships")
+
+    def getOxygen(self, lbLevel: int) -> int:
+        if self.isSubmarine:
+            return self.ships[lbLevel].getOxygen()
+        else:
+            raise NotImplementedError("getOxygen method for surface ships")
+
+    def getHuntingRange(self, lbLevel: int) -> List[List[List[int]]]:
+        if self.isSubmarine:
+            return self.ships[lbLevel].getHuntingRange()
+        else:
+            raise NotImplementedError("getHuntingRange method for surface ships")
+
     pass
