@@ -26,7 +26,7 @@ class MetaShip:
         self.groupId = groupDict["group_type"]
         self.hullType = groupDict["type"]
         self.refitHullType = groupDict["trans_type"]
-        self.hasRefit = self.refitHullType != 0
+        self.hasRefit = kwargs["refitDict"] is not None
         self.refitSkills = groupDict["trans_skill"]
         self.nationality = groupDict["nationality"]
 
