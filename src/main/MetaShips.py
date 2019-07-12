@@ -121,6 +121,10 @@ class MetaShip:
         elif affBonus < 0 or affBonus > 12:
             raise ValueError("affBonus ({}) out of bound".format(affBonus))
         else:
+            # bulin compatibility
+            if self.id in [1, 2]:
+                lbLevel = 0
+
             if self.hasRefit and refitBonus and self.changeHullTypeUponRefit:
                 baseStat = self.refitShip.getStat(statId, level)
             else:
