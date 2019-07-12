@@ -1,8 +1,8 @@
 import json
-from src.main.Ships import Ship, SurfaceShip, Submarine
-from src.main.Utility import *
-from src.main.NationList import getNationList
-from src.main.RefitNode import RefitNode
+from .Ships import Ship, SurfaceShip, Submarine
+from .Utility import *
+from .NationList import getNationList
+from .RefitNode import RefitNode
 from typing import Dict, List, Set
 
 

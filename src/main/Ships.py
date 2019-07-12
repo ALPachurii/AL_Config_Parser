@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from src.main.Utility import isKagaBB
+from .Utility import isKagaBB
 
 
 class Ship:

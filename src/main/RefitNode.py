@@ -1,6 +1,6 @@
 from typing import Dict, Any, List, Union
 
-from src.main import Utility
+from . import Utility
 
 
 class RefitNode:

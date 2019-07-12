@@ -1,6 +1,6 @@
 import math
 from typing import Dict, Union, List, Tuple, Optional
-from src.main.ConfigParser import ConfigParser
+from .ConfigParser import ConfigParser
 
 
 class MetaShip:
