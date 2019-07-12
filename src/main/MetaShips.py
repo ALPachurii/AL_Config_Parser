@@ -11,7 +11,7 @@ class MetaShip:
                                 for research ships their ids are 20000 + in-game id
     """
 
-    def __init__(self, groupDict: Dict[str, Union[int, List]], strengthenDict: Dict[str, Union[int, List[int]]],
+    def __init__(self, groupDict: Dict[str, Union[int, List]],
                  parser: ConfigParser, hasFleetTech: bool, **kwargs: Dict):
         """
         Constructor of MetaShip class
@@ -69,14 +69,6 @@ class MetaShip:
             [(parser.getRefitNode(nodeId), coord) for nodeId, coord in refitNodeCoord.items()],
             key=lambda x: x[0].getId())
 
-        def genStrengthenDict(attrName: str):
-            withIndex = zip(range(2, 7), strengthenDict[attrName])
-            return {statId: value for statId, value in withIndex}
-
-        self.strengthenValue = genStrengthenDict("durability")
-        self.strengthenExpNeeded = genStrengthenDict("level_exp")
-        self.strengthenExpProvides = genStrengthenDict("attr_exp")
-
         self.isResearchShip = self.id > 20000
         self.isCollabShip = 10000 < self.id < 20000
 
@@ -126,15 +118,15 @@ class MetaShip:
                 lbLevel = 0
 
             if self.hasRefit and refitBonus and self.changeHullTypeUponRefit:
-                baseStat = self.refitShip.getStat(statId, level)
+                baseStat = self.refitShip.getStat(statId, level, strengthenBonus)
             else:
-                baseStat = self.ships[lbLevel].getStat(statId, level)
-            strengthenStat = self.strengthenValue.get(statId, 0) if strengthenBonus else 0
+                baseStat = self.ships[lbLevel].getStat(statId, level, strengthenBonus)
+
             refitStat = sum(map(lambda x: x[0].getStatBonusSum(statId), self.refitNodeListWithCoord)) if refitBonus \
                 else 0
             researchStrengthenStat = sum([researchNode.getStatBonus(statId) for researchNode in self.researchNodeList])\
                 if (self.isResearchShip and strengthenBonus) else 0
-            return math.floor((baseStat + strengthenStat + researchStrengthenStat) * (1 + affBonus / 100) + refitStat)
+            return math.floor((baseStat + researchStrengthenStat) * (1 + affBonus / 100) + refitStat)
 
     def getEquipProficiency(self, equipSlot: int, lbLevel: int, refitBonus: bool) -> float:
         """

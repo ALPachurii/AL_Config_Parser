@@ -7,7 +7,7 @@ class Ship:
     Supertype of SurfaceShip and Submarine. Ship class stores all info of a ship and has methods to access them.
     """
 
-    def __init__(self, statDict: dict, dataDict: dict):
+    def __init__(self, statDict: dict, dataDict: dict, shipStrengthenDict: dict):
         self.id = statDict["id"]
         self.name = statDict["name"]
         self.englishName = statDict["english_name"]
@@ -33,23 +33,45 @@ class Ship:
         self.isSubmarine = False
         self.isSurfaceShip = False
 
-    def getStat(self, statID: int, level: int) -> float:
+        self.strengthenId = dataDict["strengthen_id"]
+
+        strengthenDict = shipStrengthenDict[str(self.strengthenId)]
+
+        def genStrengthenDict(attrName: str):
+            withIndex = zip(range(2, 7), strengthenDict[attrName])
+            return {statId: value for statId, value in withIndex}
+
+        self.strengthenValue = genStrengthenDict("durability")
+        self.strengthenExpNeeded = genStrengthenDict("level_exp")
+        self.strengthenExpProvides = genStrengthenDict("attr_exp")
+
+    def getStat(self, statId: int, level: int, strengthenBonus: bool) -> float:
         """
         calculates ship's base stat at certain level
 
-        :param statID: id of that attribute/stat
+        :param strengthenBonus: boolean, whether count strengthen stat bonus
+        :param statId: id of that attribute/stat
         :param level: the level, range from 1 to 120
         :return: the stat, float number
         """
-        statID -= 1
+        strengthenStat = self.strengthenValue.get(statId, 0) if strengthenBonus else 0
+        index = statId - 1
         if level < 1 or level > 120:
             raise ValueError("Level out of bound")
         else:
             if level <= 100:
-                return self.attrs[statID] + (level - 1) * self.attrsGrowth[statID] / 1000
+                return self.attrs[index] + (level - 1) * self.attrsGrowth[index] / 1000 + strengthenStat
             else:
-                return self.attrs[statID] + (level - 1) * self.attrsGrowth[statID] / 1000 + \
-                       (level - 100) * self.attrsGrowthExtra[statID] / 1000
+                return self.attrs[index] + (level - 1) * self.attrsGrowth[index] / 1000 + \
+                       (level - 100) * self.attrsGrowthExtra[index] / 1000 + strengthenStat
+
+    def getStrengthenId(self) -> int:
+        """
+        Gets the strengthen id of this ship
+
+        :return: integer, the strengthen id
+        """
+        return self.strengthenId
 
     def getStar(self) -> int:
         """
@@ -153,15 +175,15 @@ class Ship:
 
 
 class SurfaceShip(Ship):
-    def __init__(self, statDict: dict, dataDict: dict):
-        super(SurfaceShip, self).__init__(statDict, dataDict)
+    def __init__(self, statDict: dict, dataDict: dict, shipStrengthenDict: dict):
+        super(SurfaceShip, self).__init__(statDict, dataDict, shipStrengthenDict)
         self.isSubmarine = False
         self.isSurfaceShip = True
 
 
 class Submarine(Ship):
-    def __init__(self, statDict: dict, dataDict: dict):
-        super(Submarine, self).__init__(statDict, dataDict)
+    def __init__(self, statDict: dict, dataDict: dict, shipStrengthenDict: dict):
+        super(Submarine, self).__init__(statDict, dataDict, shipStrengthenDict)
         self.isSubmarine = True
         self.isSurfaceShip = False
         self.oxygen = statDict["oxy_max"]

@@ -48,9 +48,9 @@ class ConfigParser:
         """
         ID = str(shipID)
         if self.shipStatisticDict[ID]["oxy_max"] == 0:
-            return SurfaceShip(self.shipStatisticDict[ID], self.shipDataDict[ID])
+            return SurfaceShip(self.shipStatisticDict[ID], self.shipDataDict[ID], self.shipStrengthenDict)
         else:
-            return Submarine(self.shipStatisticDict[ID], self.shipDataDict[ID])
+            return Submarine(self.shipStatisticDict[ID], self.shipDataDict[ID], self.shipStrengthenDict)
 
     def getMetaShip(self, metaId: int):
         """
@@ -63,7 +63,7 @@ class ConfigParser:
 
         groupId = self.getGroupIdFromMetaId(metaId)
         hasFleetTech = str(groupId) in self.fleetTechDict
-        return MetaShip(self.shipGroupDict[str(metaId)], self.shipStrengthenDict[str(groupId)], self, hasFleetTech,
+        return MetaShip(self.shipGroupDict[str(metaId)], self, hasFleetTech,
                         fleetTechDict=self.fleetTechDict.get(str(groupId)),
                         refitDict=self.shipRefitDict.get(str(groupId)),
                         researchDict=self.shipResearchDict.get(str(groupId)))
