@@ -80,6 +80,9 @@ class MetaShip:
         self.isResearchShip = self.id > 20000
         self.isCollabShip = 10000 < self.id < 20000
 
+        self.isSubmarine = self.ships[0].isSubmarine
+        self.isSurfaceShip = self.ships[0].isSurfaceShip
+
     def getLocalizedName(self) -> str:
         """
         Gets the localized name (uncensored)

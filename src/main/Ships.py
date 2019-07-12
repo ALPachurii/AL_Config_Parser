@@ -30,6 +30,9 @@ class Ship:
 
         self.skillList = dataDict["buff_list_display"]
 
+        self.isSubmarine = False
+        self.isSurfaceShip = False
+
     def getStat(self, statID: int, level: int) -> float:
         """
         calculates ship's base stat at certain level
