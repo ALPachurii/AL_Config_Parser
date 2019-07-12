@@ -56,7 +56,7 @@ class ConfigParser:
         :param metaId: integer, the in game id of that metaship, usually 1-3 digits
         :return: MetaShip object
         """
-        from src.main.MetaShips import MetaShip
+        from .MetaShips import MetaShip
 
         groupId = self.getGroupIdFromMetaId(metaId)
         hasFleetTech = str(groupId) in self.fleetTechDict
