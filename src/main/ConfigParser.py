@@ -1,4 +1,5 @@
 import json
+from .ResearchStrengthenNode import ResearchStrengthenNode
 from .Ships import Ship, SurfaceShip, Submarine
 from .Utility import *
 from .NationList import getNationList
@@ -34,6 +35,8 @@ class ConfigParser:
         self.shipRefitDict = loadConfig("ship_data_trans")
         self.refitDataDict = loadConfig("transform_data_template")
         self.shipStrengthenDict = loadConfig("ship_data_strengthen")
+        self.shipResearchDict = loadConfig("ship_data_blueprint")
+        self.researchStrengthenDict = loadConfig("ship_strengthen_blueprint")
 
     def getShip(self, shipID: int) -> Ship:
         """
@@ -62,7 +65,8 @@ class ConfigParser:
         hasFleetTech = str(groupId) in self.fleetTechDict
         return MetaShip(self.shipGroupDict[str(metaId)], self.shipStrengthenDict[str(groupId)], self, hasFleetTech,
                         fleetTechDict=self.fleetTechDict.get(str(groupId)),
-                        refitDict=self.shipRefitDict.get(str(groupId)))
+                        refitDict=self.shipRefitDict.get(str(groupId)),
+                        researchDict=self.shipResearchDict.get(str(groupId)))
 
     def getRefitNode(self, refitNodeId: int) -> RefitNode:
         """
@@ -74,6 +78,17 @@ class ConfigParser:
         reversedAttrDict = self.getReversedAttrDict()
         nodeDict = self.refitDataDict[str(refitNodeId)]
         return RefitNode(nodeDict, reversedAttrDict)
+
+    def getResearchStrengthenNode(self, nodeId: int) -> ResearchStrengthenNode:
+        """
+        Creates a ResearchStrengthenNode object of its id
+
+        :param nodeId: integer, the id of that node
+        :return: ResearchStrengthenNode object
+        """
+        reversedAttrDict = self.getReversedAttrDict()
+        effectData = self.researchStrengthenDict[str(nodeId)]
+        return ResearchStrengthenNode(effectData, reversedAttrDict)
 
     def getWeapon(self, wepID: int) -> dict:
         pass

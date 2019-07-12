@@ -20,7 +20,7 @@ class MetaShip:
         :param parser: the parser that calls this constructor
         :param hasFleetTech: whether this ship has fleet tech stat
         :param kwargs: optional keyword parameter, "refitDict" maps to the refit stat dict, "fleetTechDict" maps to the
-                       fleet Tech stat dict
+                       fleet Tech stat dict, "researchDict" maps to the research ship data dict
         """
         self.id = groupDict["code"]
         self.groupId = groupDict["group_type"]
@@ -83,6 +83,13 @@ class MetaShip:
         self.isSubmarine = self.ships[0].isSubmarine
         self.isSurfaceShip = self.ships[0].isSurfaceShip
 
+        if self.isResearchShip:
+            researchDict = kwargs["researchDict"]
+            researchEffectIdList = researchDict["strengthen_effect"]
+            fateSimIdList = researchDict["fate_strengthen"]
+            self.researchNodeList = [parser.getResearchStrengthenNode(nodeId) for nodeId in researchEffectIdList]
+            self.fateSimNodeList = [parser.getResearchStrengthenNode(nodeId) for nodeId in fateSimIdList]
+
     def getLocalizedName(self) -> str:
         """
         Gets the localized name (uncensored)
@@ -121,7 +128,9 @@ class MetaShip:
             strengthenStat = self.strengthenValue.get(statId, 0) if strengthenBonus else 0
             refitStat = sum(map(lambda x: x[0].getStatBonusSum(statId), self.refitNodeListWithCoord)) if refitBonus \
                 else 0
-            return math.floor((baseStat + strengthenStat) * (1 + affBonus / 100) + refitStat)
+            researchStrengthenStat = sum([researchNode.getStatBonus(statId) for researchNode in self.researchNodeList])\
+                if (self.isResearchShip and strengthenBonus) else 0
+            return math.floor((baseStat + strengthenStat + researchStrengthenStat) * (1 + affBonus / 100) + refitStat)
 
     def getEquipProficiency(self, equipSlot: int, lbLevel: int, refitBonus: bool) -> float:
         """
