@@ -117,7 +117,7 @@ class MetaShip:
             if self.id in [1, 2]:
                 lbLevel = 0
 
-            if self.hasRefit and refitBonus and self.changeHullTypeUponRefit:
+            if self.hasRefit and refitBonus and self.changeShipUponRefit:
                 baseStat = self.refitShip.getStat(statId, level, strengthenBonus)
             else:
                 baseStat = self.ships[lbLevel].getStat(statId, level, strengthenBonus)
@@ -144,7 +144,7 @@ class MetaShip:
         elif lbLevel != 3 and refitBonus:
             raise ValueError("Cannot modernize without fully limit break the ship")
 
-        if self.changeHullTypeUponRefit and refitBonus:
+        if self.changeShipUponRefit and refitBonus:
             baseProf = self.refitShip.getEquipmentProficiency(equipSlot)
         else:
             baseProf = self.ships[lbLevel].getEquipmentProficiency(equipSlot)
@@ -169,7 +169,7 @@ class MetaShip:
         elif lbLevel != 3 and isRefitted:
             raise ValueError("Cannot modernize without fully limit break the ship")
 
-        if self.changeHullTypeUponRefit and isRefitted:
+        if self.changeShipUponRefit and isRefitted:
             return self.refitShip.getEquipBase(equipSlot)
         else:
             return self.ships[lbLevel].getEquipBase(equipSlot)
@@ -190,7 +190,7 @@ class MetaShip:
         elif lbLevel != 3 and isRefitted:
             raise ValueError("Cannot modernize without fully limit break the ship")
 
-        if self.changeHullTypeUponRefit and isRefitted:
+        if self.changeShipUponRefit and isRefitted:
             return self.refitShip.getEquipmentType(equipSlot)
         else:
             return self.ships[lbLevel].getEquipmentType(equipSlot)
