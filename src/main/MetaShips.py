@@ -80,6 +80,14 @@ class MetaShip:
         self.isResearchShip = self.id > 20000
         self.isCollabShip = 10000 < self.id < 20000
 
+    def getLocalizedName(self) -> str:
+        """
+        Gets the localized name (uncensored)
+
+        :return: string, name
+        """
+        return self.ships[0].name
+
     def getStat(self, statId: int, level: int, lbLevel: int, affBonus: int,
                 refitBonus: bool, strengthenBonus: bool) -> int:
         """
