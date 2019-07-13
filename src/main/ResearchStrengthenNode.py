@@ -23,3 +23,9 @@ class ResearchStrengthenNode:
         :return: integer, the bonus value
         """
         return self.statBonus.get(statId, 0)
+
+    def getEquipProficiencyBonus(self, slotId: int) -> float:
+        if len(self.proficiencyBonus) == 0:
+            return 0
+        else:
+            return self.proficiencyBonus[1] if self.proficiencyBonus[0] == slotId else 0

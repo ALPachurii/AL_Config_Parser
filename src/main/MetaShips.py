@@ -151,7 +151,10 @@ class MetaShip:
 
         refitProf = sum([nodeWithCoord[0].getStatBonusSum("equipment_proficiency_{}".format(equipSlot))
                          for nodeWithCoord in self.refitNodeListWithCoord]) if refitBonus else 0
-        return round(refitProf + baseProf, 3)
+        researchProf = sum([researchNode.getEquipProficiencyBonus(equipSlot) for researchNode in self.researchNodeList]) \
+            if (self.isResearchShip and lbLevel == 3) else 0
+
+        return round(refitProf + baseProf + researchProf, 3)
 
     def getEquipBaseCount(self, equipSlot: int, lbLevel: int, isRefitted: bool) -> int:
         """
