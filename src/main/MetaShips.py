@@ -54,6 +54,11 @@ class MetaShip:
         if self.changeShipUponRefit:
             self.changeHullTypeUponRefit = self.hullType != self.refitHullType
 
+        # bulin compatibility
+        if self.id in [1, 2]:
+            for i in [1, 2, 3]:
+                self.ships[i] = self.ships[0]
+
         refitNodeCoord = {}  # dict, keys are retrofit node ids, values are coordinates tuple(row, col)
         if self.hasRefit:
             refitDict = kwargs["refitDict"]
@@ -113,10 +118,6 @@ class MetaShip:
         elif affBonus < 0 or affBonus > 12:
             raise ValueError("affBonus ({}) out of bound".format(affBonus))
         else:
-            # bulin compatibility
-            if self.id in [1, 2]:
-                lbLevel = 0
-
             if self.hasRefit and refitBonus and self.changeShipUponRefit:
                 baseStat = self.refitShip.getStat(statId, level, strengthenBonus)
             else:
