@@ -218,13 +218,22 @@ class Submarine(Ship):
         """
         return self.ammo
 
-    def getHuntingRange(self) -> List[List[List[int]]]:
+    def getHuntingRange(self) -> List[List[str]]:
         """
-        get the hunting range of this ship
+        Generates the this ship's hunting range
 
-        :return: hunting range, list of lists of lists of integers
+        :return: hunting range, list of list of string, l[x-4][y-4] is the hunting level needed to reach this coordinate
+                 " " means this coordinate is not in range, the values are stored in string for easier wikicode
+                 generation
         """
-        return self.huntingRange
+        withIndex = zip(self.huntingRange, range(1, 10))
+        levelList = [[" " for i in range(0, 7)] for j in range(0, 7)]
+        for subLevel in withIndex:
+            huntingRange, level = subLevel
+            for coord in huntingRange:
+                levelList[coord[0] - 4][coord[1] - 4] = str(level)
+        levelList[3][3] = "x"
+        return levelList
 
     def getHuntingRangeLevel(self) -> int:
         """
