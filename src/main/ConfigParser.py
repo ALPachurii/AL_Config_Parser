@@ -4,6 +4,7 @@ from .Ships import Ship, SurfaceShip, Submarine
 from .Utility import *
 from .NationList import getNationList
 from .RefitNode import RefitNode
+from .Bullet import Bullet
 from .Barrages import Barrage
 from typing import Dict, List, Set
 
@@ -39,6 +40,7 @@ class ConfigParser:
         self.shipResearchDict = loadConfig("ship_data_blueprint")
         self.researchStrengthenDict = loadConfig("ship_strengthen_blueprint")
         self.barrageDataDict = loadConfig("barrage_template")
+        self.bulletDataDict = loadConfig("bullet_template")
 
     def getShip(self, shipID: int) -> Ship:
         """
@@ -109,6 +111,15 @@ class ConfigParser:
         :return: barrage object
         """
         return Barrage(self.barrageDataDict[str(barrageId)])
+
+    def getBullet(self, bulletId: int) -> Bullet:
+        """
+        Creates a bullet object from its id
+
+        :param bulletId: integer, the id of that bullet
+        :return:
+        """
+        return Bullet(self.bulletDataDict[str(bulletId)])
 
     def getAttrDict(self) -> Dict[int, str]:
         """
