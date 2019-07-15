@@ -102,6 +102,12 @@ class ConfigParser:
         pass
 
     def getBarrage(self, barrageId: int) -> Barrage:
+        """
+        Creates a barrage object from its id
+
+        :param barrageId: integer, the id of that barrage
+        :return: barrage object
+        """
         return Barrage(self.barrageDataDict[str(barrageId)])
 
     def getAttrDict(self) -> Dict[int, str]:

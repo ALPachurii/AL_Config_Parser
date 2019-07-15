@@ -2,6 +2,9 @@ from typing import Dict
 
 
 class Barrage:
+    """
+    Barrage class describes in what pattern are the projectiles (bullets) created
+    """
     def __init__(self, barrageData: Dict):
         self.id = barrageData["id"]
         self.offsetZ = barrageData["offset_z"]
@@ -19,4 +22,9 @@ class Barrage:
         self.offsetPrioritise = barrageData["offset_prioritise"]
 
     def getProjectileCount(self) -> int:
+        """
+        Calculates the total projectiles created
+
+        :return: integer the projectiles count
+        """
         return (self.seniorRepeat + 1) * (self.primalRepeat + 1)
