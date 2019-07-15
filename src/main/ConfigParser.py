@@ -4,6 +4,7 @@ from .Ships import Ship, SurfaceShip, Submarine
 from .Utility import *
 from .NationList import getNationList
 from .RefitNode import RefitNode
+from .Barrages import Barrage
 from typing import Dict, List, Set
 
 
@@ -37,6 +38,7 @@ class ConfigParser:
         self.shipStrengthenDict = loadConfig("ship_data_strengthen")
         self.shipResearchDict = loadConfig("ship_data_blueprint")
         self.researchStrengthenDict = loadConfig("ship_strengthen_blueprint")
+        self.barrageDataDict = loadConfig("barrage_template")
 
     def getShip(self, shipID: int) -> Ship:
         """
@@ -98,6 +100,9 @@ class ConfigParser:
 
     def getSkillExp(self, skillLevel: int) -> dict:
         pass
+
+    def getBarrage(self, barrageId: int) -> Barrage:
+        return Barrage(self.barrageDataDict[str(barrageId)])
 
     def getAttrDict(self) -> Dict[int, str]:
         """
