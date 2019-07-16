@@ -45,6 +45,7 @@ class ConfigParser:
         self.bulletDataDict = loadConfig("bullet_template")
         self.weaponDataDict = loadConfig("weapon_property")
         self.skillDataDict = loadConfig("skill_data_template")
+        self.aircraftDataDict = loadConfig("aircraft_template")
 
     def getShip(self, shipID: int) -> Ship:
         """
@@ -162,6 +163,11 @@ class ConfigParser:
         :return:
         """
         return Bullet(self.bulletDataDict[str(bulletId)])
+
+    def getAircraft(self, weaponId: int):
+        from .Weapons import Aircraft
+
+        return Aircraft(self.aircraftDataDict[str(weaponId)], self)
 
     def loadSkill(self, skillId: int) -> Dict:
         """
