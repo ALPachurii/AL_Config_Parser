@@ -19,15 +19,17 @@ class ConfigParser:
         """
         The constructor of ConfigParser, takes a string and generates a parser object
 
-        :param path: the path to "sharecfg" folder, must be absolute path
+        :param path: the path to the parent folder of "sharecfg" folder and "gamecfg" folder, must be absolute path
         """
 
         def loadConfig(configName: str) -> Dict:
-            configFile = open(path + configName)
+            configFile = open(path + "sharecfg/" + configName)
             config = json.load(configFile)
             config.pop('all')
             configFile.close()
             return config
+
+        self.configPath = path
 
         self.shipStatisticDict = loadConfig("ship_data_statistics")
         self.shipDataDict = loadConfig("ship_data_template")
@@ -129,6 +131,30 @@ class ConfigParser:
         :return:
         """
         return Bullet(self.bulletDataDict[str(bulletId)])
+
+    def loadSkill(self, skillId: int) -> Dict:
+        """
+        Loads the skill config file from serialized game files
+
+        :param skillId: integer, the skill id
+        :return: dict, the skill data
+        """
+        configFile = open(self.configPath + "gamecfg/skill/skill_" + str(skillId))
+        config = json.load(configFile)
+        configFile.close()
+        return config
+
+    def loadBuff(self, buffId: int) -> Dict:
+        """
+        Loads the buff config file, similar to method loadSkill
+
+        :param buffId: integer, the buff id
+        :return: dict, the buff data
+        """
+        configFile = open(self.configPath + "gamecfg/buff/buff_" + str(buffId))
+        config = json.load(configFile)
+        configFile.close()
+        return config
 
     def getAttrDict(self) -> Dict[int, str]:
         """
