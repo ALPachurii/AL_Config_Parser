@@ -41,6 +41,7 @@ class ConfigParser:
         self.researchStrengthenDict = loadConfig("ship_strengthen_blueprint")
         self.barrageDataDict = loadConfig("barrage_template")
         self.bulletDataDict = loadConfig("bullet_template")
+        self.weaponDataDict = loadConfig("weapon_property")
 
     def getShip(self, shipID: int) -> Ship:
         """
@@ -94,8 +95,16 @@ class ConfigParser:
         effectData = self.researchStrengthenDict[str(nodeId)]
         return ResearchStrengthenNode(effectData, reversedAttrDict)
 
-    def getWeapon(self, wepID: int) -> dict:
-        pass
+    def getWeapon(self, weaponId: int):
+        """
+        Creates weapon objects from its id
+
+        :param weaponId: id of that weapon
+        :return: weapon object
+        """
+        from .Weapons import Weapon
+
+        return Weapon(self.weaponDataDict[str(weaponId)], self)
 
     def getSkill(self, skillID: int) -> dict:
         pass
