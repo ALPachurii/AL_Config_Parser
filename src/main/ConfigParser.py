@@ -4,7 +4,7 @@ from .Ships import Ship, SurfaceShip, Submarine
 from .Utility import *
 from .NationList import getNationList
 from .RefitNode import RefitNode
-from .Bullet import Bullet
+from .Bullets import Bullet
 from .Barrages import Barrage
 from typing import Dict, List, Set
 
