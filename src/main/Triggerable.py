@@ -17,7 +17,7 @@ class Triggerable:
         self.name = data["name"]
         self.description = data["desc"]
         self.level = level
-        if data[str(level)]:
+        if str(level) in data and "effect_list" in data[str(level)]:
             self.effectList = data[str(level)]["effect_list"]
         else:
             self.effectList = data["effect_list"]
