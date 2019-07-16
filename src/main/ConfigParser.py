@@ -44,6 +44,7 @@ class ConfigParser:
         self.barrageDataDict = loadConfig("barrage_template")
         self.bulletDataDict = loadConfig("bullet_template")
         self.weaponDataDict = loadConfig("weapon_property")
+        self.skillDataDict = loadConfig("skill_data_template")
 
     def getShip(self, shipID: int) -> Ship:
         """
@@ -108,11 +109,41 @@ class ConfigParser:
 
         return Weapon(self.weaponDataDict[str(weaponId)], self)
 
-    def getSkill(self, skillID: int) -> dict:
-        pass
+    def getSkill(self, skillId: int, skillLevel: int):
+        """
+        Creates a Skill object from its id and level
 
-    def getSkillExp(self, skillLevel: int) -> dict:
-        pass
+        :param skillId: integer, the skill id
+        :param skillLevel: integer, the skill level
+        :return: Skill object
+        """
+        from .Triggerable import Skill
+
+        return Skill(self.loadSkill(skillId), skillLevel, self)
+
+    def getBuff(self, buffId: int, buffLevel: int):
+        """
+        Creates a Buff object from its id and level
+
+        :param buffId: integer, the buff id
+        :param buffLevel: integer, the buff level
+        :return: Buff object
+        """
+        from .Triggerable import Buff
+
+        return Buff(self.loadBuff(buffId), buffLevel, self)
+
+    def getRootBuff(self, buffId: int):
+        """
+        Creates a max level RootBuff object from its id. RootBuff represents the displayed skills in game
+        You shouldn't use this method for hidden skills
+
+        :param buffId: integer, the id of that buff
+        :return: RootBuff object
+        """
+        from .Triggerable import RootBuff
+
+        return RootBuff(self.loadBuff(buffId), self.skillDataDict[str(buffId)], self)
 
     def getBarrage(self, barrageId: int) -> Barrage:
         """
