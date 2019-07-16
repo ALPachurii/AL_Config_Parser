@@ -28,12 +28,12 @@ class Weapon:
 
         self.type = weaponData.get("type") or self.base.type
         self.damage = weaponData.get("damage") or self.base.damage
-        self.modifierStat = (weaponData.get("attack_attribute") or self.base.affectedAttr - 1) + 1
-        self.modifierStatRatio = (weaponData.get("attack_attribute_ratio") or self.base.attrRatio * 100) / 100
+        self.modifierStat = (weaponData.get("attack_attribute") or self.base.modifierStat - 1) + 1
+        self.modifierStatRatio = (weaponData.get("attack_attribute_ratio") or self.base.modifierStatRatio * 100) / 100
         self.reload = self.base.reload if self.base else weaponData["reload_max"] / (12 * sqrt(157))
         self.range = weaponData.get("range") or self.base.range
         self.angle = weaponData.get("angle") or self.base.angle
-        self.coefficient = weaponData.get("corrected") or self.base.weaponModifier
+        self.coefficient = weaponData.get("corrected") or self.base.coefficient
 
     def getWeaponModifier(self) -> float:
         """
