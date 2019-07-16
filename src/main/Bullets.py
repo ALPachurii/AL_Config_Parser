@@ -13,7 +13,7 @@ class Bullet:
         self.ammoType = bulletData["ammo_type"]  # 1: Normal, 2: 2: AP, 3: HE, 4: Torpedo
         self.armorModifier = bulletData["damage_type"]
         self.range = bulletData["range"]
-        self.rangeOffset = bulletData["rangeOffset"]
+        self.rangeOffset = bulletData["range_offset"]
         self.pierceCount = bulletData["pierce_count"]
         self.canPierce = self.pierceCount != 0
         self.extraParam = bulletData["extra_param"]
