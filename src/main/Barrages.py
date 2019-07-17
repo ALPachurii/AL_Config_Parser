@@ -8,20 +8,20 @@ class Barrage:
 
     def __init__(self, barrageData: Dict):
         self.id = barrageData["id"]
-        self.offsetZ = barrageData["offset_z"]
-        self.deltaOffsetZ = barrageData["delta_offset_z"]
-        self.offsetX = barrageData["offset_x"]
-        self.deltaOffsetX = barrageData["delta_offset_x"]
-        self.angle = barrageData["angle"]
-        self.deltaAngle = barrageData["delta_angle"]
-        self.delayCast = barrageData["first_delay"]
-        self.primalDelay = barrageData["delay"]
-        self.deltaPrimalDelay = barrageData["delta_delay"]
-        self.primalRepeat = barrageData["primal_repeat"]
-        self.seniorDelay = barrageData["senior_delay"]
-        self.seniorRepeat = barrageData["senior_repeat"]
-        self.randomAngle = barrageData["random_angle"]
-        self.offsetPrioritise = barrageData["offset_prioritise"]
+        self.offsetZ = barrageData.get("offset_z")
+        self.deltaOffsetZ = barrageData.get("delta_offset_z")
+        self.offsetX = barrageData.get("offset_x")
+        self.deltaOffsetX = barrageData.get("delta_offset_x")
+        self.angle = barrageData.get("angle")
+        self.deltaAngle = barrageData.get("delta_angle")
+        self.delayCast = barrageData.get("first_delay")
+        self.primalDelay = barrageData.get("delay")
+        self.deltaPrimalDelay = barrageData.get("delta_delay")
+        self.primalRepeat = barrageData.get("primal_repeat")
+        self.seniorDelay = barrageData.get("senior_delay")
+        self.seniorRepeat = barrageData.get("senior_repeat")
+        self.randomAngle = barrageData.get("random_angle")
+        self.offsetPrioritise = barrageData.get("offset_prioritise")
 
     def getProjectileCount(self) -> int:
         """
