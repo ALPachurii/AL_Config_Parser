@@ -7,20 +7,36 @@ class Weapon:
     """
     Weapon class describes the attributes of in-game weapon and has methods to calculate damage etc.
     """
+
     def __init__(self, weaponData: Dict, parser: ConfigParser):
         self.id = weaponData["id"]
-        self.name = weaponData["name"]
         if "base" in weaponData:
             self.base = parser.getWeapon(weaponData["base"])
         else:
             self.base = None
+        self.name = weaponData.get("name") or self.base.name
+
+        self.spawnType = weaponData.get("spawn_bound") or self.base.spawnType
 
         self.barrages = [parser.getBarrage(barrageId) for barrageId in
                          weaponData.get("barrage_ID", [])] or self.base.barrages
         self.barrageIdList = weaponData.get("barrage_ID") or self.base.barrageIdList
 
-        self.bullets = [parser.getBullet(bulletId) for bulletId in
-                        weaponData.get("bullet_ID", [])] or self.base.bullets
+        if self.spawnType in ["cannon", "antiaircraft", "torpedo"]:
+            self.bullets = [parser.getBullet(bulletId) for bulletId in
+                            weaponData.get("bullet_ID", [])] or self.base.bullets
+        elif self.spawnType == "plane":
+            try:
+                self.bullets = [parser.getAircraft(bulletId) for bulletId in
+                                weaponData.get("bullet_ID", [])]
+            except KeyError:
+                try:
+                    self.bullets = [parser.getAircraft(self.id)]
+                except KeyError:
+                    self.bullets = self.base.bullets
+        else:
+            raise ValueError("unknown spawnType ({})".format(self.spawnType))
+
         self.bulletIdList = weaponData.get("bullet_ID") or self.base.bulletIdList
 
         self.sameBullet = all([self.bulletIdList[0] == bulletId for bulletId in self.bulletIdList])
@@ -28,7 +44,10 @@ class Weapon:
 
         self.type = weaponData.get("type") or self.base.type
         self.damage = weaponData.get("damage") or self.base.damage
-        self.modifierStat = (weaponData.get("attack_attribute") or self.base.modifierStat - 1) + 1
+        if "attack_attribute" in weaponData:
+            self.modifierStat = weaponData["attack_attribute"]
+        else:
+            self.modifierStat = self.base.modifierStat
         self.modifierStatRatio = (weaponData.get("attack_attribute_ratio") or self.base.modifierStatRatio * 100) / 100
         self.reload = self.base.reload if self.base else weaponData["reload_max"] / (12 * sqrt(157))
         self.range = weaponData.get("range") or self.base.range
@@ -73,7 +92,14 @@ class Weapon:
 
         :return: integer, the sum
         """
-        return sum([barrage.getProjectileCount() * self.damage for barrage in self.barrages])
+        if self.spawnType == "cannon" or self.spawnType == "torpedo":
+            return sum([barrage.getProjectileCount() * self.damage for barrage in self.barrages])
+        elif self.spawnType == "plane":
+            return sum(
+                [barrage.getProjectileCount() * sum([weapon.getRawDamageSum() for weapon in bullet.getWeapons()]) for
+                 barrage, bullet in self.barragesWithBullets])
+        else:
+            return 0
 
     def getDamageSumByArmorType(self, armorType: int) -> float:
         """
@@ -83,9 +109,18 @@ class Weapon:
         :param armorType: integer, range from 1-3, the armor type. 1 for light, 2 for medium and 3 for heavy
         :return: float, the total damage
         """
-        return sum([
-            barrage.getProjectileCount() * bullet.getArmorModifier(armorType) * self.damage for barrage, bullet in
-            self.barragesWithBullets]) * self.coefficient
+        if self.spawnType == "cannon" or self.spawnType == "torpedo":
+            return sum([
+                barrage.getProjectileCount() * bullet.getArmorModifier(armorType) * self.damage for barrage, bullet in
+                self.barragesWithBullets]) * self.coefficient
+        elif self.spawnType == "plane":
+            return sum([
+                barrage.getProjectileCount() * sum([
+                    weapon.getDamageSumByArmorType() for weapon in bullet.getWeapons()]) for
+                barrage, bullet in self.barragesWithBullets
+            ]) * self.coefficient
+        else:
+            return 0
 
     def getProjectilesByAmmoType(self, ammoType: int) -> int:
         """
@@ -114,7 +149,17 @@ class Weapon:
         :return: integer or None, integer represents the ammo type and None means different bullets
         """
         if self.sameBullet:
-            return self.bullets[0].getAmmoType()
+            if self.spawnType in ["cannon", "torpedo"]:
+                return self.bullets[0].getAmmoType()
+            elif self.spawnType == "plane":
+                weapons = self.bullets[0].getWeapons()
+                ammoType = weapons[0].getAmmoType()
+                sameAmmoType = True
+                for weapon in weapons:
+                    if weapon.getAmmoType() is not None and weapon.getAmmoType() != ammoType:
+                        sameAmmoType = False
+                if sameAmmoType:
+                    return ammoType
 
     def getArmorModifier(self, armorType: int) -> Optional[float]:
         """
