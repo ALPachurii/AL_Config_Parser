@@ -24,6 +24,7 @@ class Triggerable:
 
         self.childBuffs = []
         self.childSkills = []
+        self.dotEffects = []
         self.weapons = []
 
         self.containsWeapons = False
@@ -74,6 +75,7 @@ class Skill(Triggerable):
     """
     Skills are basically a collection of skill effects
     """
+
     def __init__(self, skillData: Dict, skillLevel: int, parser: ConfigParser):
         super(Skill, self).__init__(skillData, skillLevel, parser)
         for effect in self.effectList:
@@ -88,12 +90,16 @@ class Skill(Triggerable):
 
         self.containsWeapons = self.containsWeapons or any(map(lambda x: x.containsWeapons, self.childBuffs))
         self.weapons += reduce(lambda x, y: x + y, map(lambda x: x.weapons, self.childBuffs), [])
+        self.dotEffects += reduce(lambda x, y: x + y, [buff.dotEffects for buff in self.childBuffs], []) + \
+            reduce(lambda x, y: x + y, [skill.dotEffects for skill in self.childSkills], [])
+        self.isLeaf = len(self.childBuffs) == 0
 
 
 class Buff(Triggerable):
     """
     Buffs are generally the control layer of skill tree that control the triggering of skill effects
     """
+
     def __init__(self, buffData: Dict, buffLevel: int, parser: ConfigParser):
         self.icon = buffData["icon"]
         super(Buff, self).__init__(buffData, buffLevel, parser)
@@ -106,11 +112,17 @@ class Buff(Triggerable):
                 self.childSkills.append(parser.getSkill(argList["skill_id"], self.level))
             elif effectType == "BattleBuffCastSkillRandom":
                 self.childSkills += [parser.getSkill(skillId, self.level) for skillId in argList["skill_id_list"]]
+            elif effectType == "BattleBuffDOT":
+                self.dotEffects += argList
+
+        self.dotEffects += reduce(lambda x, y: x + y, [buff.dotEffects for buff in self.childBuffs], []) + \
+            reduce(lambda x, y: x + y, [skill.dotEffects for skill in self.childSkills], [])
 
         self.containsWeapons = any(map(lambda x: x.containsWeapons, self.childBuffs)) or any(
             map(lambda x: x.containsWeapons, self.childSkills))
         self.weapons = reduce(lambda x, y: x + y, map(lambda x: x.weapons, self.childBuffs), []) + reduce(
             lambda x, y: x + y, map(lambda x: x.weapons, self.childSkills), [])
+        self.isLeaf = len(self.childBuffs) == 0 and len(self.childSkills) == 0
 
     def getIcon(self) -> int:
         """
@@ -125,6 +137,7 @@ class RootBuff(Buff):
     """
     RootBuffs are the root nodes of skill trees. They represents the visible skills in-game.
     """
+
     def __init__(self, buffData: Dict, skillData: Dict, parser: ConfigParser):
         self.maxLevel = skillData["max_level"]
         super(RootBuff, self).__init__(buffData, self.maxLevel, parser)
