@@ -23,7 +23,7 @@ class Bullet:
         Gets the bullet traveling/rendering type
 
         :return: integer, 1 means normal projectiles (not affected by gravity), 2 means projectiles traveling in a
-                 parabola, 3 means torpedoes
+                 parabola or bombs, 3 means torpedoes
         """
         return self.type
 
@@ -31,7 +31,7 @@ class Bullet:
         """
         Gets the bullet ammo type
 
-        :return: integer, 1 means normal, 2 means AP, 3 means HE, 4 means torpedo
+        :return: integer, 1 means normal, 2 means AP, 3 means HE, 4 means torpedo, 6 means bomber bomb
         """
         return self.ammoType
 
@@ -47,7 +47,7 @@ class Bullet:
         """
         Gets the armor modifier of a certain armor type
 
-        :param armorType: integer, range from 0 - 2, 0 means light, 2 means medium, 3 means heavy
+        :param armorType: integer, range from 0 - 2, 0 means light, 1 means medium, 2 means heavy
         :return: float number, the armor modifier
         """
         return self.armorModifier[armorType]
