@@ -21,3 +21,13 @@ example:
 
    # creates a buff object
    parser.getRootBuff(buffId)
+
+============================
+Style guide for contributors
+============================
+
+1) The paradigm should be mainly functional
+
+2) Docstring should use sphinx style
+
+3) Naming should use java style, that is, upper camel case for class and file names and lower camel case otherwise
