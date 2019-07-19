@@ -1,6 +1,7 @@
 import math
 from typing import Dict, Union, List, Tuple, Optional
 from .ConfigParser import ConfigParser
+from .RefitNode import RefitNode
 
 
 class MetaShip:
@@ -244,4 +245,10 @@ class MetaShip:
         else:
             raise NotImplementedError("getHuntingRange method for surface ships")
 
-    pass
+    def getRefitNodeListWithCoord(self) -> List[Tuple[RefitNode, Tuple[int, int]]]:
+        """
+        Gets the refit node list that zipped with coordinate
+
+        :return: list of tuples, the refit node objects zipped with their coordinates
+        """
+        return self.refitNodeListWithCoord
